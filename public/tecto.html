@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CasaDirecta — Casas sem comissão</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#8a602f;--on-bg:#fffaf3;--on-bg2:#fbeed8;--card:#fffaf3;--tx:#2a1301;--mu:#6b5440;--ac:#6e3f12;--ac2:#f1e4d0;--inp:#f7efe3;--tag:#ffc93c;--bd:#e3d3bd;--ok:#12805c;--er:#b3261e;--fh:'Bricolage Grotesque',system-ui,sans-serif;--fb:'Figtree',system-ui,sans-serif;color-scheme:light}
+
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--fb);background:var(--bg);color:var(--tx);line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--fh);margin:0;line-height:1.1}
+.w{max-width:1120px;margin:0 auto;padding:0 18px}
+header{background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5}
+.nav{display:flex;align-items:center;gap:6px;height:60px}
+.logo{font:800 1.3rem var(--fh);margin-right:auto;cursor:pointer}
+.logo i{font-style:normal;color:var(--ac)}
+.nb{background:none;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--mu);font-weight:600}
+.nb:hover,.nb.on{background:var(--ac2);color:var(--ac)}
+.btn{background:var(--ac);color:#fff;border:0;padding:10px 18px;border-radius:10px;font-weight:600;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn.g{background:var(--ac2);color:var(--ac)}
+.btn.r{background:#fbe4e2;color:var(--er)}
+.btn.s{padding:6px 12px;font-size:.85rem}
+:focus-visible{outline:3px solid var(--tag);outline-offset:2px}
+.hero{position:relative;isolation:isolate;overflow:hidden;border-radius:16px;margin-top:18px;padding:44px 22px 26px;box-shadow:0 3px 12px rgba(42,19,1,.28)}
+.hero h1{font-size:clamp(2rem,6vw,3.6rem);font-weight:800;max-width:14ch;letter-spacing:-.02em;color:var(--on-bg)}
+.hero p{color:var(--on-bg2);max-width:48ch;margin:12px 0 22px;font-size:1.05rem}
+.ht{position:relative;z-index:1}
+.ht h1,.ht p{position:relative;z-index:1}
+.hc{position:absolute;left:-22px;top:-44px;width:calc(100% + 44px);height:calc(100% + 44px);z-index:0;pointer-events:none;display:block}
+.bar{position:relative;z-index:1;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;display:block}
+.bf{display:none;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.bar.open .bf{display:grid}
+.bar label,.f label{display:block;font-size:.8rem;color:var(--mu);margin-bottom:3px}
+input,select,textarea{width:100%;background:var(--inp);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:9px 10px}
+::placeholder{color:var(--mu);opacity:.75}
+.bar>.btn{width:100%}
+.cnt{margin:22px 0 12px;color:var(--on-bg2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;padding-bottom:50px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .15s;box-shadow:0 3px 12px rgba(42,19,1,.28)}
+.c:hover{transform:translateY(-3px)}
+.ph{height:160px;position:relative;display:flex;align-items:center;justify-content:center;font-size:3rem}
+.pr{position:absolute;left:0;bottom:14px;background:var(--tag);color:#14182b;font:700 .95rem var(--fh);padding:5px 12px 5px 10px;border-radius:0 8px 8px 0}
+.tp{position:absolute;right:10px;top:10px;background:rgba(20,24,43,.78);color:#fff;font-size:.78rem;padding:3px 9px;border-radius:20px}
+.cb{padding:14px}
+.cb h3{font-size:1.05rem;margin-bottom:6px}
+.mu{color:var(--mu);font-size:.9rem;margin:2px 0}
+.ft{display:flex;gap:14px;margin-top:10px;font-size:.88rem;font-weight:500}
+.empty{grid-column:1/-1;text-align:center;padding:50px 0;color:var(--on-bg2)}
+.view{display:none}.view.on{display:block}
+.sl{position:absolute;inset:0;z-index:0;overflow:hidden;background:#2a1301}
+.sl .s{position:absolute;inset:0;opacity:0;transition:opacity .6s}
+.sl .s.on{opacity:1}
+.sl .s img{width:100%;height:100%;object-fit:cover;display:block}
+.sl .s::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(25,12,2,.7) 0%,rgba(25,12,2,.5) 50%,rgba(25,12,2,.82) 100%)}
+.sl .s span{position:absolute;left:22px;top:12px;z-index:2;padding:4px 12px;border-radius:20px;background:rgba(20,10,0,.6);color:#fff;font:600 .85rem var(--fb)}
+.sl .a{position:absolute;top:10px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,250,243,.85);color:var(--tx);font-size:1.2rem;line-height:1;cursor:pointer;z-index:2}
+.sl .a:hover{background:var(--card)}
+.sl .pv{right:50px}.sl .nx{right:10px}
+.sl .dt{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:8px;z-index:2}
+.sl .dt button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:rgba(255,250,243,.55);cursor:pointer}
+.sl .dt button.on{background:var(--tag)}
+@media(prefers-reduced-motion:reduce){.sl .s{transition:none}}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:22px;margin:26px 0}
+.box h2{font-size:1.6rem;margin-bottom:6px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.f .full{grid-column:1/-1}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.thumbs img{width:70px;height:70px;object-fit:cover;border-radius:8px;cursor:pointer}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gal #gf{width:100%;height:240px;object-fit:cover;border-radius:12px;display:block}
+.gal .thumbs{margin:8px 0 14px}
+.fee{background:var(--ac2);border-radius:10px;padding:12px 14px;margin-top:16px;font-size:.92rem}
+.ok{background:#dff5ec;color:#0b5a40;border-radius:10px;padding:14px;margin-top:16px}
+.tb{width:100%;border-collapse:collapse;font-size:.92rem}
+.tb th,.tb td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.tb th{color:var(--mu);font-weight:500}
+.tabs{display:flex;gap:6px;margin:14px 0}
+.bd{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.78rem;font-weight:600}
+.bd.y{background:#fff0c4;color:#6b4c00}.bd.g{background:#dff5ec;color:#0b5a40}
+.ov{position:fixed;inset:0;background:rgba(10,12,25,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.ov.on{display:flex}
+.tectoimg{width: 120px; height: 40px;}
+.md{background:var(--card);border-radius:16px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:22px;position:relative}
+.md .x{position:absolute;right:12px;top:10px;background:none;border:0;font-size:1.5rem;cursor:pointer;color:var(--mu)}
+.md .ph{height:190px;border-radius:12px;margin-bottom:14px}
+.hint{font-size:.82rem;color:var(--mu);background:var(--bg);border-radius:8px;padding:8px 10px;margin-top:12px}
+.er{color:var(--er);font-size:.88rem;margin-top:8px;min-height:1.2em}
+.wa{display:block;text-align:center;background:#1fa855;color:#fff;text-decoration:none;padding:11px;border-radius:10px;font-weight:600;margin-top:14px}
+@media(max-width:860px){.bf{grid-template-columns:1fr 1fr}.f{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.c{transition:none}
+}
+</style>
+</head>
+<body>
+<header><div class="w nav">
+  <div class="logo" onclick="show('home')">
+    <svg viewBox="0 0 920 300" class="tectoimg" xmlns="http://w3.org">
+      <!-- Linha horizontal superior (Teto) -->
+      <line x1="40" y1="40" x2="880" y2="40" stroke="#8C6239" stroke-width="12" stroke-linecap="square"/>
+      
+      <!-- Primeiro T (Haste vertical unida diretamente à linha superior) -->
+      <line x1="145" y1="40" x2="145" y2="185" stroke="#8C6239" stroke-width="14"/>
+      
+      <!-- Letra E -->
+      <path d="M 285,80 L 235,80 L 235,185 L 285,185 M 235,132 L 275,132" fill="none" stroke="#8C6239" stroke-width="14" stroke-linejoin="miter" stroke-linecap="square"/>
+      
+      <!-- Letra C -->
+      <path d="M 445,80 L 395,80 L 395,185 L 445,185" fill="none" stroke="#8C6239" stroke-width="14" stroke-linejoin="miter" stroke-linecap="square"/>
+      
+      <!-- Segundo T (Unido diretamente à linha superior) -->
+      <line x1="585" y1="40" x2="585" y2="185" stroke="#8C6239" stroke-width="14"/>
+      
+      <!-- Letra O -->
+      <rect x="680" y="80" width="155" height="105" fill="none" stroke="#8C6239" stroke-width="14" stroke-linejoin="miter"/>
+      
+      <!-- Linha inferior esquerda do slogan -->
+      <line x1="40" y1="235" x2="110" y2="235" stroke="#8C6239" stroke-width="6"/>
+      
+      <!-- Slogan centralizado e ampliado -->
+      <text x="460" y="246" font-family="'Montserrat', 'Arial', sans-serif" font-size="34" letter-spacing="6" fill="#8C6239" text-anchor="middle" font-weight="600">CONECTAMOS PESSOAS ÀS CASAS</text>
+      
+      <!-- Linha inferior direita do slogan -->
+      <line x1="810" y1="235" x2="880" y2="235" stroke="#8C6239" stroke-width="6"/>
+    </svg>
+  </div>
+  <button class="nb on" data-v="home" onclick="show('home')">Casas</button>
+  <button class="nb" data-v="new" onclick="show('new')">Anunciar</button>
+  <button class="nb" data-v="mine" id="nMine" style="display:none" onclick="show('mine')">Os meus anúncios</button>
+  <button class="nb" data-v="admin" id="nAdmin" style="display:none" onclick="show('admin')">Administração</button>
+  <button class="btn s" id="nAuth" onclick="authOpen()">Entrar</button>
+</div></header>
+
+
+<!-- INÍCIO -->
+<main class="w view on" id="v-home">
+  <section class="hero">
+    <div class="ht"><canvas class="hc" id="hc" aria-hidden="true"></canvas>
+    <h1>Casa sem comissão.</h1>
+    <p>Compre ou arrende falando directamente com o dono. Sem intermediários, sem pagar um mês a ninguém.</p></div>
+    <div class="sl" id="sl" role="region" aria-label="Casas em destaque">
+    <div class="s on"><img src="/slides/foto2.jpg" alt=""><span>Casas de luxo e alto padrão</span></div>
+    <div class="s"><img src="/slides/foto3.jpg" alt=""><span>Casas de gama média</span></div>
+    <div class="s"><img src="/slides/foto1.jpg" alt=""><span>Casas económicas</span></div>
+    <button class="a pv" onclick="slMove(-1)" aria-label="Anterior">&#8249;</button>
+    <button class="a nx" onclick="slMove(1)" aria-label="Seguinte">&#8250;</button>
+    <div class="dt" id="slDt"></div>
+  </div>
+  <div class="bar" id="bar"><div class="bf">
+      <div><label for="fq">Localidade</label><input id="fq" placeholder="Bairro, município ou cidade" oninput="render()"></div>
+      <div><label for="ft">Tipo</label><select id="ft" onchange="render()"><option value="">Venda e arrendamento</option><option value="venda">Venda</option><option value="arrenda">Arrendamento</option></select></div>
+      <div><label for="fp">Província</label><select id="fp" onchange="render()"></select></div>
+      <div><label for="fk">Quartos (mín.)</label><select id="fk" onchange="render()"><option value="0">Todos</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      <div><label for="fm">Preço máx. (Kz)</label><input id="fm" type="number" min="0" placeholder="Sem limite" oninput="render()"></div>
+      </div><button class="btn" id="bBtn" aria-expanded="false" onclick="procurar()">Procurar</button>
+    </div>
+  </section>
+  <div class="cnt" id="cnt"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<!-- ANUNCIAR -->
+<main class="w view" id="v-new">
+  <div class="box">
+    <h2>Anunciar a minha casa</h2>
+    <p class="mu">Preencha os dados, junte as fotos e o documento. Depois de pagar a taxa e validarmos o documento, o anúncio fica visível durante 30 dias.</p>
+    <form id="nf" class="f" onsubmit="submitNew(event)">
+      <div><label>Tipo</label><select name="tipo"><option value="venda">Venda</option><option value="arrenda">Arrendamento</option></select></div>
+      <div><label>Preço (Kz; renda mensal se for arrendamento)</label><input name="preco" type="number" min="1" required></div>
+      <div class="full"><label>Título</label><input name="titulo" maxlength="70" placeholder="Ex.: Vivenda T3 com quintal" required></div>
+      <div><label>Província</label><select name="prov" id="np"></select></div>
+      <div><label>Município</label><input name="mun" required></div>
+      <div class="full"><label>Bairro / referência</label><input name="bairro" required></div>
+      <div><label>Quartos</label><input name="quartos" type="number" min="0" required></div>
+      <div><label>Casas de banho</label><input name="banhos" type="number" min="1" required></div>
+      <div><label>Área (m²)</label><input name="area" type="number" min="1" required></div>
+      <div><label>Telefone / WhatsApp de contacto</label><input name="tel" required placeholder="9XX XXX XXX"></div>
+      <div class="full"><label>Descrição</label><textarea name="desc" rows="4" required></textarea></div>
+      <div class="full"><label>Fotos da casa (1 a 8)</label><input type="file" id="nfo" accept="image/*" multiple required onchange="thumbs()"><div class="thumbs" id="th"></div></div>
+      <div class="full"><label>Documento da casa (prova de propriedade)</label><input type="file" name="doc" accept=".pdf,image/*" required></div>
+      <div class="full fee">Taxa do anúncio: <b>5.000 Kz</b> por 30 dias. Paga por referência Multicaixa ou transferência.</div>
+      <div class="full"><button class="btn">Enviar anúncio</button></div>
+    </form>
+    <div id="nok"></div>
+  </div>
+</main>
+
+<!-- OS MEUS ANÚNCIOS -->
+<main class="w view" id="v-mine">
+  <div class="box">
+    <h2>Os meus anúncios</h2>
+    <div style="overflow-x:auto;margin-top:14px" id="mine"></div>
+  </div>
+</main>
+
+<!-- ADMIN -->
+<main class="w view" id="v-admin">
+  <div class="box">
+    <h2>Administração</h2>
+    <div class="tabs"><button class="btn s" id="tP" onclick="adm('p')">Por validar</button><button class="btn s g" id="tA" onclick="adm('a')">Publicados</button></div>
+    <div style="overflow-x:auto" id="adm"></div>
+  </div>
+</main>
+
+<!-- DETALHE -->
+<div class="ov" id="ovD" onclick="if(event.target===this)closeAll()"><div class="md" id="mdD"></div></div>
+
+<!-- AUTENTICAÇÃO -->
+<div class="ov" id="ovA" onclick="if(event.target===this)closeAll()"><div class="md">
+  <button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+  <div class="tabs"><button class="btn s" id="aL" onclick="tab('l')">Entrar</button><button class="btn s g" id="aR" onclick="tab('r')">Criar conta</button></div>
+  <form id="fL" onsubmit="login(event)">
+    <div class="f" style="margin-top:0">
+      <div class="full"><label>Email</label><input name="email" type="email" required></div>
+      <div class="full"><label>Palavra-passe</label><input name="pass" type="password" required></div>
+    </div>
+    <div class="er" id="eL"></div>
+    <button class="btn" style="width:100%">Entrar</button>
+    
+  </form>
+  <form id="fR" style="display:none" onsubmit="reg(event)">
+    <div class="f" style="margin-top:0">
+      <div class="full"><label>Nome</label><input name="nome" required></div>
+      <div><label>Telefone</label><input name="tel" required></div>
+      <div><label>Email</label><input name="email" type="email" required></div>
+      <div class="full"><label>Palavra-passe</label><input name="pass" type="password" minlength="6" required></div>
+    </div>
+    <div class="er" id="eR"></div>
+    <button class="btn" style="width:100%">Criar conta</button>
+  </form>
+  <form id="fS" style="display:none" onsubmit="setup(event)">
+    <div class="f" style="margin-top:0">
+      <div class="full"><b>Criar o primeiro administrador</b></div>
+      <div class="full"><label>Nome</label><input name="nome" required></div>
+      <div><label>Telefone</label><input name="tel" required></div>
+      <div><label>Email</label><input name="email" type="email" required></div>
+      <div class="full"><label>Palavra-passe</label><input name="pass" type="password" minlength="6" required></div>
+      <div class="full"><label>Chave de instalação</label><input name="chave" type="password" required autocomplete="off"></div>
+    </div>
+    <div class="er" id="eS"></div>
+    <button class="btn" style="width:100%">Criar administrador</button>
+  </form>
+</div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const kz=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' Kz';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PROV=['Luanda','Benguela','Huambo','Huíla','Cabinda','Malanje','Uíge','Namibe'];
+let me=null, pendingView=null, admTab='p', seq=100;
+let L=[
+ {id:1,tipo:'venda',titulo:'Vivenda T4 com piscina',prov:'Luanda',mun:'Talatona',bairro:'Bairro Cidade Financeira',preco:185000000,quartos:4,banhos:3,area:320,tel:'923111222',desc:'Vivenda isolada com piscina, quintal amplo e garagem para 3 carros. Condomínio fechado com segurança 24h.',est:'pub',dias:21,h:210},
+ {id:2,tipo:'arrenda',titulo:'Apartamento T2 mobilado',prov:'Luanda',mun:'Maianga',bairro:'Maianga',preco:450000,quartos:2,banhos:2,area:95,tel:'924222333',desc:'Apartamento no 3.º andar, mobilado, com gerador e reservatório de água. Perto do Largo da Maianga.',est:'pub',dias:12,h:250},
+ {id:3,tipo:'arrenda',titulo:'Casa T3 com quintal',prov:'Benguela',mun:'Lobito',bairro:'Compão',preco:280000,quartos:3,banhos:2,area:140,tel:'925333444',desc:'Casa recentemente pintada, quintal murado, água canalizada e energia da rede.',est:'pub',dias:27,h:160},
+ {id:4,tipo:'venda',titulo:'Casa T3 em construção avançada',prov:'Huambo',mun:'Huambo',bairro:'Bairro Académico',preco:32000000,quartos:3,banhos:2,area:180,tel:'926444555',desc:'Obra em acabamentos, terreno de 400 m² com documentos regularizados.',est:'pub',dias:5,h:30},
+ {id:5,tipo:'arrenda',titulo:'Quarto e sala independente',prov:'Luanda',mun:'Viana',bairro:'Zango 2',preco:90000,quartos:1,banhos:1,area:45,tel:'927555666',desc:'Entrada independente, ideal para uma pessoa ou casal. Ponto de água no quintal.',est:'pub',dias:18,h:340},
+ {id:6,tipo:'venda',titulo:'Apartamento T3 no centro',prov:'Huíla',mun:'Lubango',bairro:'Mapunda',preco:48000000,quartos:3,banhos:2,area:130,tel:'928666777',desc:'Prédio com elevador, estacionamento e vista para a Serra da Leba.',est:'pub',dias:9,h:280},
+ {id:7,tipo:'arrenda',titulo:'Moradia T4 para empresa',prov:'Cabinda',mun:'Cabinda',bairro:'Cidade Alta',preco:900000,quartos:4,banhos:3,area:260,tel:'929777888',desc:'Moradia espaçosa, serve para escritório ou residência. Segurança e vedação.',est:'pub',dias:24,h:190},
+ {id:8,tipo:'venda',titulo:'Terreno vedado com casa T2',prov:'Luanda',mun:'Cacuaco',bairro:'Kikolo',preco:21000000,quartos:2,banhos:1,area:90,tel:'923888999',desc:'Terreno de 600 m² vedado, casa pequena para ampliar. Documentos em dia.',est:'pub',dias:3,h:120},
+ {id:9,tipo:'arrenda',titulo:'Apartamento T1 novo',prov:'Benguela',mun:'Benguela',bairro:'Praia Morena',preco:220000,quartos:1,banhos:1,area:60,tel:'924999000',desc:'Apartamento novo, a 5 minutos da praia.',est:'pend',pago:true,dono:'joao@exemplo.ao',h:300},
+ {id:10,tipo:'venda',titulo:'Vivenda T3 geminada',prov:'Luanda',mun:'Belas',bairro:'Benfica',preco:58000000,quartos:3,banhos:2,area:170,tel:'925000111',desc:'Vivenda geminada com quintal pequeno e garagem.',est:'pend',pago:false,dono:'joao@exemplo.ao',h:90}];
+const fsrc=f=>/^https?:\/\//.test(f)?f:'/fotos/'+f;
+const grad=h=>`linear-gradient(135deg,hsl(${h} 55% 62%),hsl(${h+45} 50% 38%))`;
+
+function show(v){
+  if((v==='new'||v==='mine')&&!me){pendingView=v;authOpen('Entre ou crie uma conta para continuar.');return}
+  document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  if(v==='admin')adm(admTab);
+  if(v==='mine')mine();
+  window.scrollTo(0,0)}
+function closeAll(){document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'))}
+
+function card(a){return `<article class="c" tabindex="0" onclick="det(${a.id})" onkeydown="if(event.key==='Enter')det(${a.id})">
+ <div class="ph" style="background:${grad(a.h)}">${a.fotos[0]?`<img src="${fsrc(a.fotos[0])}" alt="" loading="lazy" onerror="this.remove()">`:'&#127968;'}<span class="tp">${a.tipo==='venda'?'Venda':'Arrendamento'}</span><span class="pr">${kz(a.preco)}${a.tipo==='arrenda'?'/mês':''}</span></div>
+ <div class="cb"><h3>${esc(a.titulo)}</h3><p class="mu">${esc(a.bairro)}, ${esc(a.mun)}, ${a.prov}</p>
+ <div class="ft"><span>${a.quartos} quartos</span><span>${a.banhos} casas de banho</span><span>${a.area} m²</span></div></div></article>`}
+
+let PUB=[], rid=0;
+const mapa=r=>({id:+r.id,tipo:r.tipo==='venda'?'venda':'arrenda',titulo:r.titulo,prov:r.provincia,mun:r.municipio,bairro:r.bairro,preco:+r.preco,quartos:r.quartos,banhos:r.banhos,area:r.area_m2,tel:r.contacto,desc:r.descricao,dias:r.dias,fotos:r.fotos||[],h:(r.id*47)%360,est:'pub'});
+
+async function render(){
+  const n=++rid,p=new URLSearchParams();
+  const q=$('#fq').value.trim(),t=$('#ft').value,pv=$('#fp').value,k=+$('#fk').value,m=+$('#fm').value;
+  if(q)p.set('q',q);
+  if(t)p.set('tipo',t==='arrenda'?'arrendamento':'venda');
+  if(pv)p.set('provincia',pv);
+  if(k)p.set('quartos',k);
+  if(m)p.set('max',m);
+  let r;
+  try{
+    const res=await fetch('/api/anuncios?'+p);
+    if(!res.ok)throw new Error();
+    r=(await res.json()).map(mapa);
+  }catch(e){
+    if(n!==rid)return;
+    $('#cnt').textContent='';
+    $('#grid').innerHTML='<div class="empty">Não foi possível carregar as casas. Tente novamente.</div>';
+    return}
+  if(n!==rid)return;
+  PUB=r;
+  $('#cnt').textContent=r.length+(r.length===1?' casa encontrada':' casas encontradas');
+  $('#grid').innerHTML=r.length?r.map(card).join(''):'<div class="empty">Nenhuma casa encontrada. Tente outra localidade ou retire um filtro.</div>'}
+
+function det(id){
+  const a=PUB.find(x=>x.id===id);
+  $('#mdD').innerHTML=`<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+  ${a.fotos.length?`<div class="gal"><img id="gf" src="${fsrc(a.fotos[0])}" alt="Foto da casa"><div class="thumbs">${a.fotos.map(f=>`<img src="${fsrc(f)}" alt="" onclick="$('#gf').src=this.src">`).join('')}</div></div>`:`<div class="ph" style="background:${grad(a.h)}">&#127968;</div>`}
+  <h2 style="font-size:1.5rem">${esc(a.titulo)}</h2>
+  <p class="mu">${esc(a.bairro)}, ${esc(a.mun)}, ${a.prov}</p>
+  <p style="font:700 1.4rem var(--fh);margin:10px 0">${kz(a.preco)}${a.tipo==='arrenda'?' por mês':''}</p>
+  <div class="ft" style="margin:0 0 12px"><span>${a.quartos} quartos</span><span>${a.banhos} casas de banho</span><span>${a.area} m²</span></div>
+  <p>${esc(a.desc)}</p>
+  <p class="mu">Anúncio activo por mais ${a.dias||30} dias. Código ${String(a.id).padStart(4,'0')}</p>
+  <a class="wa" href="https://wa.me/244${a.tel.replace(/\D/g,'')}" target="_blank" rel="noopener">Falar com o dono no WhatsApp</a>
+  <p class="mu" style="text-align:center;margin-top:8px">Ou ligue: ${esc(a.tel)}</p>`;
+  $('#ovD').classList.add('on')}
+
+/* Contas */
+function authOpen(msg){tab('l');$('#eL').textContent=msg||'';$('#ovA').classList.add('on')}
+function tab(t){$('#fS').style.display='none';$('#fL').style.display=t==='l'?'':'none';$('#fR').style.display=t==='r'?'':'none';
+  $('#aL').classList.toggle('g',t!=='l');$('#aR').classList.toggle('g',t!=='r')}
+function setMe(u){me=u;$('#nAuth').textContent=u?'Sair ('+u.nome.split(' ')[0]+')':'Entrar';
+  $('#nAdmin').style.display=u&&u.papel==='admin'?'':'none';
+  $('#nMine').style.display=u?'':'none';closeAll();
+  if(u&&pendingView){const v=pendingView;pendingView=null;show(v)}}
+async function api(url,corpo){
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo||{})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(d.erro||'Algo correu mal. Tente novamente.');
+  return d}
+async function login(e){e.preventDefault();const f=new FormData(e.target);$('#eL').textContent='';
+  try{setMe(await api('/api/login',{email:f.get('email'),senha:f.get('pass')}))}
+  catch(err){$('#eL').textContent=err.message}}
+async function reg(e){e.preventDefault();const f=new FormData(e.target);$('#eR').textContent='';
+  try{setMe(await api('/api/registo',{nome:f.get('nome'),telefone:f.get('tel'),email:f.get('email'),senha:f.get('pass')}))}
+  catch(err){$('#eR').textContent=err.message}}
+$('#nAuth').onclick=async()=>{if(me){await api('/api/logout').catch(()=>{});setMe(null);show('home')}else authOpen()};
+
+/* Anunciar */
+function thumbs(){$('#th').innerHTML=[...$('#nfo').files].map(f=>`<img src="${URL.createObjectURL(f)}" alt="">`).join('')}
+async function reduzir(file){
+  try{
+    const im=await createImageBitmap(file);
+    const k=Math.min(1,1600/Math.max(im.width,im.height));
+    const c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    const b=await new Promise(r=>c.toBlob(r,'image/jpeg',.82));
+    return b||file;
+  }catch(e){return file}}
+async function submitNew(e){
+  e.preventDefault();
+  const form=e.target,f=new FormData(form),btn=form.querySelector('button');
+  f.set('tipo',f.get('tipo')==='venda'?'venda':'arrendamento');
+  $('#nok').innerHTML='';
+  btn.disabled=true;
+  try{
+    const fotos=[...$('#nfo').files];
+    if(fotos.length<1)throw new Error('Junte pelo menos uma foto da casa.');
+    if(fotos.length>8)throw new Error('Pode juntar no máximo 8 fotos.');
+    for(const x of fotos)f.append('fotos',await reduzir(x),'foto.jpg');
+    const r=await fetch('/api/anuncios',{method:'POST',body:f});
+    const d=await r.json().catch(()=>({}));
+    if(r.status===401){setMe(null);pendingView='new';authOpen('A sessão expirou. Entre novamente.');return}
+    if(!r.ok)throw new Error(d.erro||'Algo correu mal. Tente novamente.');
+    form.reset();$('#th').innerHTML='';
+    const id=d.id;
+    $('#nok').innerHTML=`<div class="ok"><b>Anúncio enviado.</b> Pague 5.000 Kz com a referência <b>${ref(id)}</b>. Depois de confirmarmos o pagamento e o documento, o anúncio fica publicado.</div>`;
+  }catch(err){
+    $('#nok').innerHTML='<div class="er">'+esc(err.message)+'</div>';
+  }finally{btn.disabled=false}}
+
+/* Os meus anúncios */
+const ref=id=>`${String(id).padStart(3,'0')} 482 ${String(id*7).padStart(3,'0')}`;
+async function mine(){
+  const el=$('#mine');
+  el.innerHTML='<p class="mu">A carregar...</p>';
+  let rows;
+  try{
+    const r=await fetch('/api/meus-anuncios');
+    if(r.status===401){setMe(null);pendingView='mine';authOpen('A sessão expirou. Entre novamente.');return}
+    if(!r.ok)throw new Error();
+    rows=await r.json();
+  }catch(e){el.innerHTML='<p class="er">Não foi possível carregar.</p>';return}
+  if(!rows.length){el.innerHTML='<p class="mu">Ainda não tem anúncios. Use «Anunciar» para publicar o primeiro.</p>';return}
+  el.innerHTML=`<table class="tb"><tr><th>Anúncio</th><th>Estado</th><th>Acções</th></tr>${rows.map(a=>{
+    let bd,info;
+    if(a.concluido){bd='<span class="bd g">'+(a.tipo==='venda'?'Vendida':'Arrendada')+'</span>';info='Anúncio concluído. Já não está visível.'}
+    else if(a.expirado){bd='<span class="bd y">Expirado</span>';info='O anúncio já não está visível. Renove para o publicar de novo (taxa de 5.000 Kz).'}
+    else if(a.estado==='publicado'){bd='<span class="bd g">Publicado</span>';info='Expira em '+a.dias+' dias.'}
+    else if(a.pago){bd='<span class="bd y">Em validação</span>';info='Taxa paga. À espera da validação do documento.'}
+    else{bd='<span class="bd y">Por pagar</span>';info='Pague 5.000 Kz com a referência <b>'+ref(a.id)+'</b>.'}
+    return `<tr>
+      <td><div style="display:flex;gap:10px;align-items:center">${a.fotos[0]?`<img src="${fsrc(a.fotos[0])}" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`:''}<div><b>${esc(a.titulo)}</b><br><span class="mu">${esc(a.municipio)}, ${esc(a.provincia)} &middot; ${kz(a.preco)}${a.tipo==='arrendamento'?'/mês':''}</span></div></div></td>
+      <td>${bd}<br><span class="mu">${info}</span></td>
+      <td>${a.estado==='publicado'&&!a.expirado&&!a.concluido?`<button class="btn s g" onclick="meuConcluir(${a.id})">${a.tipo==='venda'?'Vendida':'Arrendada'}</button> `:''}${a.expirado?`<button class="btn s" onclick="meuRenovar(${a.id})">Renovar</button> `:''}<button class="btn s r" onclick="meuRemover(${a.id})">Remover</button></td></tr>`}).join('')}</table>`}
+async function meuConcluir(id){
+  if(!confirm('Marcar como concluído? O anúncio deixa de aparecer na página inicial.'))return;
+  try{await api('/api/meus-anuncios/'+id+'/concluir')}catch(err){alert(err.message);return}
+  await mine();render()}
+async function meuRenovar(id){
+  try{await api('/api/meus-anuncios/'+id+'/renovar')}catch(err){alert(err.message);return}
+  await mine();render()}
+async function meuRemover(id){
+  if(!confirm('Remover este anúncio, as fotos e o documento? Não dá para desfazer.'))return;
+  try{await api('/api/meus-anuncios/'+id+'/remover')}catch(err){alert(err.message);return}
+  await mine();render()}
+
+/* Administração */
+async function adm(t){
+  admTab=t;$('#tP').classList.toggle('g',t!=='p');$('#tA').classList.toggle('g',t!=='a');
+  $('#adm').innerHTML='<p class="mu">A carregar...</p>';
+  let rows;
+  try{
+    const r=await fetch('/api/admin/anuncios?estado='+(t==='p'?'pendente':'publicado'));
+    if(!r.ok)throw new Error();
+    rows=await r.json();
+  }catch(e){if(t===admTab)$('#adm').innerHTML='<p class="er">Não foi possível carregar.</p>';return}
+  if(t!==admTab)return;
+  if(!rows.length){$('#adm').innerHTML='<p class="mu">Nada aqui por agora.</p>';return}
+  $('#adm').innerHTML=t==='p'
+   ?`<table class="tb"><tr><th>Anúncio</th><th>Enviado por</th><th>Documento</th><th>Taxa</th><th>Acções</th></tr>${rows.map(a=>`<tr><td><b>${esc(a.titulo)}</b><br><span class="mu">${esc(a.municipio)}, ${esc(a.provincia)} &middot; ${kz(a.preco)}</span></td><td>${esc(a.dono_nome)}<br><span class="mu">${esc(a.dono_email)}</span></td>
+     <td><a href="/api/admin/anuncios/${a.id}/documento" target="_blank" rel="noopener">Ver documento</a><div class="thumbs">${a.fotos.map(f=>`<a href="/fotos/${f}" target="_blank" rel="noopener"><img src="/fotos/${f}" alt=""></a>`).join('')}</div></td>
+     <td><span class="bd ${a.pago?'g':'y'}">${a.pago?'Paga':'Por confirmar'}</span></td>
+     <td>${a.pago?'':`<button class="btn s g" onclick="admAcao('pago',${a.id})">Confirmar taxa</button> `}<button class="btn s" onclick="admAcao('publicar',${a.id})">Publicar</button> <button class="btn s r" onclick="admAcao('remover',${a.id})">Rejeitar</button></td></tr>`).join('')}</table>`
+   :`<table class="tb"><tr><th>Anúncio</th><th>Expira em</th><th>Acções</th></tr>${rows.map(a=>`<tr><td><b>${esc(a.titulo)}</b><br><span class="mu">${esc(a.municipio)}, ${esc(a.provincia)}</span></td><td>${a.expirado?'<span class="bd y">Expirado</span>':a.dias+' dias'}</td>
+     <td><button class="btn s r" onclick="admAcao('remover',${a.id})">Remover</button></td></tr>`).join('')}</table>`}
+async function admAcao(acao,id){
+  if(acao==='remover'&&!confirm('Remover este anúncio e o documento? Não dá para desfazer.'))return;
+  try{await api('/api/admin/anuncios/'+id+'/'+acao)}catch(err){alert(err.message);return}
+  await adm(admTab);render()}
+
+/* Animação do topo */
+(function(){
+  const cv=$('#hc');if(!cv)return;
+  const cx=cv.getContext('2d');
+  const LADO=1; /* 1 = pontos no canto direito, -1 = canto esquerdo */
+  const COR=['rgba(107, 77, 0, 0.619)','#d2cdc7ab'],PONTO=['#fffaf3','#d4aa70'],DUR=[7,7,8],TOT=22;
+  const parado=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const R=i=>{const x=Math.sin(i*12.9898+1.7)*43758.5453;return x-Math.floor(x)};
+  const lim=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const suave=t=>t*t*(3-2*t);
+  const bz=(p0,p1,p2,p3,t)=>{const u=1-t;return u*u*u*p0+3*u*u*t*p1+3*u*t*t*p2+t*t*t*p3};
+  let W=0,H=0,dpr=1,A=1;
+  const ini=performance.now();
+
+  function traco(P,a,b){
+    const seg=[];let L=0;
+    for(let k=0;k<P.length-1;k++){const l=Math.hypot(P[k+1][0]-P[k][0],P[k+1][1]-P[k][1]);seg.push(l);L+=l}
+    const s0=a*L,s1=b*L;let acc=0,ja=false;
+    cx.beginPath();
+    for(let k=0;k<seg.length;k++){
+      const l=seg[k],lo=Math.max(s0,acc),hi=Math.min(s1,acc+l);
+      if(hi>lo){
+        const dx=P[k+1][0]-P[k][0],dy=P[k+1][1]-P[k][1];
+        const x1=P[k][0]+dx*(lo-acc)/l,y1=P[k][1]+dy*(lo-acc)/l;
+        const x2=P[k][0]+dx*(hi-acc)/l,y2=P[k][1]+dy*(hi-acc)/l;
+        if(!ja){cx.moveTo(x1,y1);ja=true}else cx.lineTo(x1,y1);
+        cx.lineTo(x2,y2)}
+      acc+=l}}
+
+  function linhas(t){
+    const N=9;
+    for(let i=0;i<N;i++){
+      const w=W*(.1+.12*R(i)),d=H*(.3+.6*R(i+20)),x0=W*(i+.5)/N-w/2;
+      const P=[[x0,-4],[x0,d],[x0+w,d],[x0+w,-4]]; /* baixo, direita, cima */
+      const u=lim((t-i*.35)/3.4,0,1);
+      const a=suave(lim((u-.4)/.6,0,1)),b=suave(lim(u/.6,0,1));
+      if(b-a<.001)continue;
+      traco(P,a,b);
+      cx.strokeStyle=COR[i%2];cx.lineWidth=i%2?2.2:3;cx.stroke()}}
+
+  function pontos(t){
+    const g=24,m=14,cols=Math.floor((W-m)/g)+1,rows=Math.floor((H-m)/g)+1,tot=Math.max(1,cols+rows-2);
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const u=lim((t-(r+c)/tot*3.8)/.6,0,1);
+      if(u<=0)continue;
+      const x=LADO>0?W-m-c*g:m+c*g,y=m+r*g;
+      cx.fillStyle=PONTO[(r+c)%2];
+      cx.beginPath();cx.arc(x,y,(2.4+Math.sin(t*2+r+c)*.5)*suave(u),0,7);cx.fill()}}
+
+  function aneis(t){
+    for(let i=0;i<5;i++){
+      const u=lim((t-i*.8)/2.8,0,1);
+      if(u<=0||u>=1)continue;
+      const x=W*(.12+.76*R(i+40)),y=H*(.15+.5*R(i+50));
+      cx.globalAlpha=A*(1-u);
+      cx.strokeStyle=COR[i%2];cx.lineWidth=2;
+      cx.beginPath();cx.arc(x,y,suave(u)*H*.7,0,7);cx.stroke()}
+    const f=suave(lim((t-2.5)/1.5,0,1));
+    for(let i=0;i<46;i++){
+      const x=W*R(i+70)+Math.sin(t*.8+i)*8,v=10+22*R(i+90);
+      let y=(H*R(i+110)-t*v)%H;if(y<0)y+=H;
+      cx.globalAlpha=A*f*(.5+.5*Math.sin(t*2.2+i*1.7))*.85;
+      cx.fillStyle=COR[i%2];
+      cx.beginPath();cx.arc(x,y,.8+1.8*R(i+130),0,7);cx.fill()}}
+
+  const FASES=[linhas,pontos,aneis];
+  function desenha(f,t){
+    cx.setTransform(dpr,0,0,dpr,0,0);
+    cx.clearRect(0,0,W,H);
+    cx.lineCap='round';
+    cx.globalAlpha=A*f*(.75+.25*Math.sin(t*2.2+1.7));
+    cx.globalAlpha=A;
+    FASES[f](t);
+    cx.globalAlpha=1}
+  function ajusta(){
+    const r=cv.getBoundingClientRect();
+    W=r.width;H=r.height;dpr=Math.min(devicePixelRatio||1,2);
+    cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+    if(parado&&W)desenha(0,3.2)}
+  function quadro(now){
+    requestAnimationFrame(quadro);
+    if(document.hidden||!W)return;
+    let t=((now-ini)/1000)%TOT,f=0;
+    while(t>=DUR[f]){t-=DUR[f];f++}
+    desenha(f,t)}
+  new ResizeObserver(ajusta).observe(cv);
+  ajusta();
+  if(!parado)requestAnimationFrame(quadro)})();
+
+/* Slides */
+let slI=0,slPausa=false;
+function slVer(i){
+  const s=document.querySelectorAll('#sl .s'),d=document.querySelectorAll('#slDt button');
+  slI=(i+s.length)%s.length;
+  s.forEach((e,k)=>e.classList.toggle('on',k===slI));
+  d.forEach((e,k)=>e.classList.toggle('on',k===slI))}
+function slMove(n){slVer(slI+n)}
+(function(){
+  const sl=$('#sl'),n=sl.querySelectorAll('.s').length;
+  $('#slDt').innerHTML=Array.from({length:n},(_,k)=>`<button onclick="slVer(${k})" aria-label="Slide ${k+1}"></button>`).join('');
+  slVer(0);
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const hr=$('.hero');
+  hr.onmouseenter=()=>slPausa=true;
+  hr.onmouseleave=()=>slPausa=false;
+  setInterval(()=>{if(!slPausa&&!document.hidden)slMove(1)},4000)})();
+
+/* Barra de pesquisa */
+function procurar(){
+  const b=$('#bar'),aberta=b.classList.toggle('open');
+  $('#bBtn').setAttribute('aria-expanded',aberta);
+  if(!aberta)render()}
+
+/* Arranque */
+$('#fp').innerHTML='<option value="">Todas</option>'+PROV.map(p=>`<option>${p}</option>`).join('');
+$('#np').innerHTML=PROV.map(p=>`<option>${p}</option>`).join('');
+render();
+fetch('/api/eu').then(r=>r.json()).then(u=>{if(u)setMe(u)}).catch(()=>{});
+
+async function setup(e){e.preventDefault();const f=new FormData(e.target);$('#eS').textContent='';
+  try{setMe(await api('/api/admin/inicial',{nome:f.get('nome'),telefone:f.get('tel'),email:f.get('email'),senha:f.get('pass'),chave:f.get('chave')}));e.target.reset()}
+  catch(err){$('#eS').textContent=err.message}}
+document.addEventListener('keydown',async e=>{
+  if(!(e.ctrlKey&&(e.key==='.'||e.code==='Period')))return;
+  e.preventDefault();
+  try{
+    const d=await (await fetch('/api/admin/estado')).json();
+    authOpen();
+    if(!d.existe){$('#fL').style.display='none';$('#fS').style.display='';$('#eS').textContent=''}
+  }catch(err){authOpen('Não foi possível verificar o servidor.')}
+});
+</script>
+</body>
+</html>

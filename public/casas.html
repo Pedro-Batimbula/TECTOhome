@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CasaDirecta — Casas sem comissão</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf6ef;--on-bg:#fffaf3;--on-bg2:#fbeed8;--card:#ffffff;--tx:#2a1301;--mu:#6b5440;--ac:#6e3f12;--ac2:#f1e4d0;--inp:#f7efe3;--tag:#ffc93c;--bd:#e3d3bd;--ok:#12805c;--er:#b3261e;--fh:'Bricolage Grotesque',system-ui,sans-serif;--fb:'Figtree',system-ui,sans-serif;color-scheme:light}
+
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--fb);background:var(--bg);color:var(--tx);line-height:1.5;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--fh);margin:0;line-height:1.1}
+.w{max-width:1120px;margin:0 auto;padding:0 18px}
+header{background:rgba(250,246,239,.78);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid rgba(110,63,18,.08);position:sticky;top:0;z-index:5;margin-bottom:-69px}
+.nav{display:flex;align-items:center;gap:4px;height:68px}
+.logo{font:800 1.3rem var(--fh);margin-right:auto;cursor:pointer}
+.logo i{font-style:normal;color:var(--ac)}
+.nb{background:none;border:0;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--mu);font-weight:600;transition:background .18s,color .18s}
+.nb:hover,.nb.on{background:var(--ac2);color:var(--ac)}
+.btn{background:var(--ac);color:#fff;border:0;padding:10px 18px;border-radius:10px;font-weight:600;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn.g{background:var(--ac2);color:var(--ac)}
+.btn.r{background:#fbe4e2;color:var(--er)}
+.btn.s{padding:6px 12px;font-size:.85rem}
+:focus-visible{outline:3px solid var(--tag);outline-offset:2px}
+.hero{position:relative;isolation:isolate;overflow:hidden;border-radius:0;width:100vw;margin:0 0 0 calc(50% - 50vw);padding:140px max(18px,calc(50vw - 542px)) 28px;box-shadow:0 12px 40px rgba(42,19,1,.22)}
+.hero h1{font-size:clamp(2.4rem,7vw,4.4rem);font-weight:800;max-width:12ch;letter-spacing:-.02em;color:var(--on-bg)}
+.hero p{color:var(--on-bg2);max-width:48ch;margin:12px 0 22px;font-size:1.05rem}
+.ht{position:relative;z-index:1}
+.ht h1,.ht p{position:relative;z-index:1}
+.hc{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;display:block}
+.bar{position:relative;z-index:2;background:var(--card);border-radius:20px;padding:14px;display:flex;gap:12px;align-items:flex-end;box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.bf{display:grid;flex:1;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;gap:10px}
+.bar label,.f label{display:block;font-size:.8rem;color:var(--mu);margin-bottom:3px}
+input,select,textarea{width:100%;background:var(--inp);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:9px 10px}
+::placeholder{color:var(--mu);opacity:.75}
+.bar>.btn{width:auto;padding:11px 28px}
+.cnt{margin:26px 0 14px;color:var(--mu);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;padding-bottom:50px}
+.c{background:var(--card);border:1px solid rgba(110,63,18,.08);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 1px 2px rgba(42,19,1,.06),0 8px 24px rgba(42,19,1,.08)}
+.c:hover{transform:translateY(-4px);box-shadow:0 2px 4px rgba(42,19,1,.06),0 16px 36px rgba(42,19,1,.16)}
+.ph{height:190px;position:relative;display:flex;align-items:center;justify-content:center;font-size:3rem}
+.pr{position:absolute;left:12px;bottom:12px;background:var(--tag);color:#2a1301;font:800 1.05rem var(--fh);font-variant-numeric:tabular-nums;padding:6px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.tp{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--ac);font-size:.74rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+.cb{padding:16px 18px 18px}
+.cb h3{font-size:1.05rem;margin-bottom:6px}
+.mu{color:var(--mu);font-size:.9rem;margin:2px 0}
+.ft{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);font-size:.88rem;font-weight:500;color:var(--mu)}
+.ft span{display:inline-flex;align-items:center;gap:6px}
+.ft svg{width:17px;height:17px;stroke:var(--ac);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.empty{grid-column:1/-1;text-align:center;padding:50px 0;color:var(--mu)}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 14px}
+.feat>div{background:var(--inp);border-radius:12px;padding:12px 6px;text-align:center}
+.feat svg{width:24px;height:24px;stroke:var(--ac);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.feat b{display:block;font:700 1.05rem var(--fh);margin-top:4px}
+.feat span{display:block;font-size:.76rem;color:var(--mu)}
+.feat[hidden]{display:none}
+.mb{display:block;margin:0 auto 14px}
+.um{position:relative}
+.umm{display:none;position:absolute;right:0;top:calc(100% + 8px);min-width:210px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:6px;box-shadow:0 12px 32px rgba(42,19,1,.2);z-index:30}
+.umm.on{display:block}
+.umm button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 12px;border-radius:9px;cursor:pointer;font-weight:600}
+.umm button:hover{background:var(--ac2)}
+.umm .sep{border-top:1px solid var(--bd);margin:4px 0}
+.pls{display:grid;gap:12px;margin-top:14px}
+.pc{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--bd);border-radius:14px;padding:14px 16px;background:var(--card)}
+.pc.cur{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac2)}
+.pc>div{flex:1;min-width:180px}
+.pc h3{font-size:1.1rem}
+.pc .pp{font:800 1.15rem var(--fh);margin:2px 0}
+.pc .bd{margin-left:6px;vertical-align:middle}
+.cats{display:flex;gap:10px;overflow-x:auto;padding:22px 2px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex:0 0 auto;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:88px;padding:12px 10px;background:var(--card);border:1px solid var(--bd);border-radius:16px;cursor:pointer;font-weight:600;font-size:.82rem;color:var(--mu);transition:background .18s,color .18s,border-color .18s}
+.cat svg{width:26px;height:26px;stroke:var(--ac);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cat:hover{background:var(--ac2)}
+.cat.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.cat.on svg{stroke:#fff}
+.view{display:none}.view.on{display:block}
+main.view:not(#v-home){padding-top:90px}
+.pl{position:absolute;right:12px;top:12px;font-size:.74rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.88);color:var(--mu)}
+.pl.medio{background:#fff0c4;color:#6b4c00}
+.pl.premium{background:var(--tag);color:#2a1301}
+.lk{background:var(--ac2);border-radius:12px;padding:16px;margin-top:14px;text-align:center}
+.lk .btn{margin-top:6px}
+.sl{position:absolute;inset:0;z-index:0;overflow:hidden;background:#2a1301}
+.sl .s{position:absolute;inset:0;opacity:0;transition:opacity .6s}
+.sl .s.on{opacity:1}
+.sl .s img{width:100%;height:100%;object-fit:cover;display:block}
+.sl .s::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(25,12,2,.7) 0%,rgba(25,12,2,.5) 50%,rgba(25,12,2,.82) 100%)}
+.sl .s span{position:absolute;left:max(18px,calc(50vw - 542px));top:84px;z-index:2;padding:4px 12px;border-radius:20px;background:rgba(20,10,0,.6);color:#fff;font:600 .85rem var(--fb)}
+.sl .a{position:absolute;top:10px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(255,250,243,.85);color:var(--tx);font-size:1.2rem;line-height:1;cursor:pointer;z-index:2}
+.sl .a:hover{background:var(--card)}
+.sl .pv{right:calc(max(18px,50vw - 542px) + 40px)}.sl .nx{right:max(18px,calc(50vw - 542px))}
+.sl .dt{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:8px;z-index:2}
+.sl .dt button{width:10px;height:10px;border-radius:50%;border:0;padding:0;background:rgba(255,250,243,.55);cursor:pointer}
+.sl .dt button.on{background:var(--tag)}
+@media(prefers-reduced-motion:reduce){.sl .s{transition:none}}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:22px;margin:26px 0}
+.box h2{font-size:1.6rem;margin-bottom:6px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.f .full{grid-column:1/-1}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.thumbs img{width:70px;height:70px;object-fit:cover;border-radius:8px;cursor:pointer}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.c:hover .ph img{transform:scale(1.06)}
+.gal #gf{width:100%;height:240px;object-fit:cover;border-radius:12px;display:block}
+.gal .thumbs{margin:8px 0 14px}
+.fee{background:var(--ac2);border-radius:10px;padding:12px 14px;margin-top:16px;font-size:.92rem}
+.ok{background:#dff5ec;color:#0b5a40;border-radius:10px;padding:14px;margin-top:16px}
+.tb{width:100%;border-collapse:collapse;font-size:.92rem}
+.tb th,.tb td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.tb th{color:var(--mu);font-weight:500}
+.tabs{display:flex;gap:6px;margin:14px 0}
+.bd{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.78rem;font-weight:600}
+.bd.y{background:#fff0c4;color:#6b4c00}.bd.g{background:#dff5ec;color:#0b5a40}
+.ov{position:fixed;inset:0;background:rgba(10,12,25,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.ov.on{display:flex}
+.tectoimg{width:180px;height:36px;display:block}
+.md{background:var(--card);border-radius:16px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:22px;position:relative}
+.md .x{position:absolute;right:12px;top:10px;background:none;border:0;font-size:1.5rem;cursor:pointer;color:var(--mu)}
+.md .ph{height:190px;border-radius:12px;margin-bottom:14px}
+.hint{font-size:.82rem;color:var(--mu);background:var(--bg);border-radius:8px;padding:8px 10px;margin-top:12px}
+.er{color:var(--er);font-size:.88rem;margin-top:8px;min-height:1.2em}
+.wa{display:block;text-align:center;background:#1fa855;color:#fff;text-decoration:none;padding:11px;border-radius:10px;font-weight:600;margin-top:14px}
+.fab{display:none}
+@media(max-width:860px){.bf{grid-template-columns:1fr 1fr}.f{grid-template-columns:1fr}.bar{flex-direction:column;align-items:stretch}.bar>.btn{width:100%}
+.bar{display:none;position:fixed;left:12px;right:12px;bottom:84px;max-height:70vh;overflow:auto}
+.bar.open{display:flex;z-index:10}
+.hero:has(.bar.open){z-index:7}
+.fab{display:flex;position:fixed;right:14px;bottom:16px;z-index:8;align-items:center;gap:6px;background:var(--ac);color:#fff;border:0;padding:10px 16px;font-size:.88rem;border-radius:999px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(42,19,1,.35)}
+.fab svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#fabN{bottom:66px}
+#fabH{bottom:116px}
+.fx.on{background:#b88a5a}
+body:has(.bar.open) .fx{display:none}
+.nb[data-v="home"],.nb[data-v="new"]{display:none}}
+@media(prefers-reduced-motion:reduce){.c{transition:none}
+}
+</style>
+</head>
+<body>
+<header><div class="w nav">
+  <div class="logo" onclick="show('home')">
+    <svg viewBox="0 10 1060 210" class="tectoimg" xmlns="http://www.w3.org/2000/svg">
+      <!-- Linha superior (teto) -->
+      <line x1="40" y1="40" x2="850" y2="40" stroke="#111111" stroke-width="22" stroke-linecap="butt"/>
+      <!-- T -->
+      <line x1="145" y1="40" x2="145" y2="185" stroke="#111111" stroke-width="22" stroke-linecap="butt"/>
+      <!-- E -->
+      <path d="M 285,80 L 235,80 L 235,185 L 285,185 M 235,132 L 275,132" fill="none" stroke="#111111" stroke-width="22" stroke-linejoin="miter" stroke-linecap="butt"/>
+      <!-- C -->
+      <path d="M 445,80 L 395,80 L 395,185 L 445,185" fill="none" stroke="#111111" stroke-width="22" stroke-linejoin="miter" stroke-linecap="butt"/>
+      <!-- T -->
+      <line x1="585" y1="40" x2="585" y2="185" stroke="#111111" stroke-width="22" stroke-linecap="butt"/>
+      <!-- O -->
+      <rect x="680" y="80" width="155" height="105" rx="0" fill="none" stroke="#111111" stroke-width="22" stroke-linejoin="miter"/>
+      <!-- Linha fina dourada sob as letras -->
+      <line x1="40" y1="212" x2="1020" y2="212" stroke="#8C6239" stroke-width="5" stroke-linecap="butt"/>
+      <!-- home -->
+      <text x="866" y="185" font-family="Figtree,system-ui,sans-serif" font-weight="600" font-size="64" fill="#111111">home</text>
+      <!-- Estrela de 4 pontas no fim do teto -->
+      <path d="M880,10 L889,31 L910,40 L889,49 L880,70 L871,49 L850,40 L871,31 Z" fill="#8C6239"/>
+    </svg>
+  </div>
+  <button class="nb on" data-v="home" onclick="show('home')">Casas</button>
+  <button class="nb" data-v="new" onclick="show('new')">Anunciar</button>
+  <button class="nb" data-v="mine" id="nMine" style="display:none" onclick="show('mine')">Os meus anúncios</button>
+  <button class="nb" data-v="admin" id="nAdmin" style="display:none" onclick="show('admin')">Administração</button>
+  <div class="um"><button class="btn s" id="nAuth">Entrar</button>
+    <div class="umm" id="umm">
+      <button onclick="show('mine')">Os meus anúncios</button>
+      <button onclick="planosOpen()">Actualizar plano</button>
+      <button onclick="infoOpen()">As minhas informações</button>
+      <div class="sep"></div>
+      <button onclick="sair()">Sair</button>
+    </div>
+  </div>
+</div></header>
+
+
+<button class="fab" id="fab" onclick="fabToggle()" aria-label="Procurar casas"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span id="fabT">Procurar</span></button>
+
+<button class="fab fx on" id="fabH" data-v="home" onclick="show('home')" aria-label="Casas"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/></svg><span>Casas</span></button>
+<button class="fab fx" id="fabN" data-v="new" onclick="show('new')" aria-label="Anunciar"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Anunciar</span></button>
+
+<!-- INÍCIO -->
+<main class="w view on" id="v-home">
+  <section class="hero">
+    <canvas class="hc" id="hc" aria-hidden="true"></canvas>
+    <div class="ht">
+    <h1>Casa sem comissão.</h1>
+    <p>Compre ou arrende falando directamente com o dono. Sem intermediários, sem pagar um mês a ninguém.</p></div>
+    <div class="sl" id="sl" role="region" aria-label="Casas em destaque">
+    <div class="s on"><img src="/slides/foto2.jpg" alt=""><span>Casas de luxo e alto padrão</span></div>
+    <div class="s"><img src="/slides/foto3.jpg" alt=""><span>Casas de gama média</span></div>
+    <div class="s"><img src="/slides/foto1.jpg" alt=""><span>Casas económicas</span></div>
+    <button class="a pv" onclick="slMove(-1)" aria-label="Anterior">&#8249;</button>
+    <button class="a nx" onclick="slMove(1)" aria-label="Seguinte">&#8250;</button>
+    <div class="dt" id="slDt"></div>
+  </div>
+  <div class="bar" id="bar"><div class="bf">
+      <div><label for="fq">Localidade</label><input id="fq" placeholder="Bairro, município ou cidade" oninput="render()"></div>
+      <div><label for="ft">Tipo</label><select id="ft" onchange="render()"><option value="">Venda e arrendamento</option><option value="venda">Venda</option><option value="arrenda">Arrendamento</option></select></div>
+      <div><label for="fc">Categoria</label><select id="fc" onchange="render()"><option value="">Todas</option><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="loja">Loja</option><option value="armazem">Armazém</option><option value="escritorio">Escritório</option><option value="terreno">Terreno</option></select></div>
+      <div><label for="fp">Província</label><select id="fp" onchange="render()"></select></div>
+      <div><label for="fk">Quartos (mín.)</label><select id="fk" onchange="render()"><option value="0">Todos</option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      <div><label for="fm">Preço máx. (Kz)</label><input id="fm" type="number" min="0" placeholder="Sem limite" oninput="render()"></div>
+      </div><button class="btn" id="bBtn" onclick="procurar()">Procurar</button>
+    </div>
+  </section>
+  <div class="cats" id="cats" role="tablist" aria-label="Categorias"></div>
+  <div class="cnt" id="cnt"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<!-- ANUNCIAR -->
+<main class="w view" id="v-new">
+  <div class="box">
+    <h2>Anunciar a minha casa</h2>
+    <p class="mu">Preencha os dados, junte as fotos e o documento. Depois de validarmos o documento, o anúncio fica visível durante 30 dias.</p>
+    <form id="nf" class="f" onsubmit="submitNew(event)">
+      <div class="full"><label>Categoria</label><select name="categoria" onchange="catForm()"><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="loja">Loja</option><option value="armazem">Armazém</option><option value="escritorio">Escritório</option><option value="terreno">Terreno</option></select></div>
+      <div><label>Tipo</label><select name="tipo"><option value="venda">Venda</option><option value="arrenda">Arrendamento</option></select></div>
+      <div><label>Preço (Kz; renda mensal se for arrendamento)</label><input name="preco" type="number" min="1" required></div>
+      <div class="full"><label>Título</label><input name="titulo" maxlength="70" placeholder="Ex.: Vivenda T3 com quintal" required></div>
+      <div><label>Província</label><select name="prov" id="np"></select></div>
+      <div><label>Município</label><input name="mun" required></div>
+      <div class="full"><label>Bairro / referência</label><input name="bairro" required></div>
+      <div><label>Quartos</label><input name="quartos" type="number" min="0" required></div>
+      <div><label>Casas de banho</label><input name="banhos" type="number" min="1" required></div>
+      <div><label>Área (m²)</label><input name="area" type="number" min="1" required></div>
+      <div><label>Telefone / WhatsApp de contacto</label><input name="tel" required placeholder="9XX XXX XXX"></div>
+      <div><label>Salas (opcional)</label><input name="salas" type="number" min="0"></div>
+      <div><label>Cozinhas (opcional)</label><input name="cozinhas" type="number" min="0"></div>
+      <div><label>Varandas (opcional)</label><input name="varandas" type="number" min="0"></div>
+      <div><label>Quintal (opcional)</label><select name="quintal"><option value="">Não indicar</option><option value="sim">Tem quintal</option><option value="nao">Não tem quintal</option></select></div>
+      <div class="full"><label>Descrição</label><textarea name="desc" rows="4" required></textarea></div>
+      <div class="full"><label>Fotos da casa (1 a 8)</label><input type="file" id="nfo" accept="image/*" multiple required onchange="thumbs()"><div class="thumbs" id="th"></div></div>
+      <div class="full"><label>Documento da casa (prova de propriedade)</label><input type="file" name="doc" accept=".pdf,image/*" required></div>
+      <div class="full fee"><b>Anunciar sem comissões.</b> Taxa do anúncio: <b>0 Kz</b>. Depois de validarmos o documento, o anúncio fica visível durante 30 dias.</div>
+      <div class="full"><button class="btn">Enviar anúncio</button></div>
+    </form>
+    <div id="nok"></div>
+  </div>
+</main>
+
+<!-- OS MEUS ANÚNCIOS -->
+<main class="w view" id="v-mine">
+  <div class="box">
+    <h2>Os meus anúncios</h2>
+    <div style="overflow-x:auto;margin-top:14px" id="mine"></div>
+    <h2 style="font-size:1.3rem;margin-top:28px">Os meus acessos</h2>
+    <div style="overflow-x:auto;margin-top:10px" id="acc"></div>
+  </div>
+</main>
+
+<!-- ADMIN -->
+<main class="w view" id="v-admin">
+  <div class="box">
+    <h2>Administração</h2>
+    <div class="tabs"><button class="btn s" id="tP" onclick="adm('p')">Por validar</button><button class="btn s g" id="tA" onclick="adm('a')">Publicados</button><button class="btn s g" id="tC" onclick="adm('c')">Acessos</button></div>
+    <div style="overflow-x:auto" id="adm"></div>
+  </div>
+</main>
+
+<!-- DETALHE -->
+<div class="ov" id="ovD" onclick="if(event.target===this)closeAll()"><div class="md" id="mdD"></div></div>
+
+<!-- AUTENTICAÇÃO -->
+<div class="ov" id="ovA" onclick="if(event.target===this)closeAll()"><div class="md">
+  <button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+  <div class="tabs"><button class="btn s" id="aL" onclick="tab('l')">Entrar</button><button class="btn s g" id="aR" onclick="tab('r')">Criar conta</button></div>
+  <form id="fL" onsubmit="login(event)">
+    <div class="f" style="margin-top:0">
+      <div class="full"><label>Email</label><input name="email" type="email" required></div>
+      <div class="full"><label>Palavra-passe</label><input name="pass" type="password" required></div>
+    </div>
+    <div class="er" id="eL"></div>
+    <button class="btn" style="width:100%">Entrar</button>
+    
+  </form>
+  <form id="fR" style="display:none" onsubmit="reg(event)">
+    <div class="f" style="margin-top:0">
+      <div class="full"><label>Nome</label><input name="nome" required></div>
+      <div><label>Telefone</label><input name="tel" required></div>
+      <div><label>Email</label><input name="email" type="email" required></div>
+      <div class="full"><label>Palavra-passe</label><input name="pass" type="password" minlength="6" required></div>
+    </div>
+    <div class="er" id="eR"></div>
+    <button class="btn" style="width:100%">Criar conta</button>
+  </form>
+  <form id="fS" style="display:none" onsubmit="setup(event)">
+    <div class="f" style="margin-top:0">
+      <div class="full"><b>Criar o primeiro administrador</b></div>
+      <div class="full"><label>Nome</label><input name="nome" required></div>
+      <div><label>Telefone</label><input name="tel" required></div>
+      <div><label>Email</label><input name="email" type="email" required></div>
+      <div class="full"><label>Palavra-passe</label><input name="pass" type="password" minlength="6" required></div>
+      <div class="full"><label>Chave de instalação</label><input name="chave" type="password" required autocomplete="off"></div>
+    </div>
+    <div class="er" id="eS"></div>
+    <button class="btn" style="width:100%">Criar administrador</button>
+  </form>
+</div></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const kz=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' Kz';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PROV=['Luanda','Benguela','Huambo','Huíla','Cabinda','Malanje','Uíge','Namibe'];
+let me=null, pendingView=null, admTab='p', seq=100;
+let L=[
+ {id:1,tipo:'venda',titulo:'Vivenda T4 com piscina',prov:'Luanda',mun:'Talatona',bairro:'Bairro Cidade Financeira',preco:185000000,quartos:4,banhos:3,area:320,tel:'923111222',desc:'Vivenda isolada com piscina, quintal amplo e garagem para 3 carros. Condomínio fechado com segurança 24h.',est:'pub',dias:21,h:210},
+ {id:2,tipo:'arrenda',titulo:'Apartamento T2 mobilado',prov:'Luanda',mun:'Maianga',bairro:'Maianga',preco:450000,quartos:2,banhos:2,area:95,tel:'924222333',desc:'Apartamento no 3.º andar, mobilado, com gerador e reservatório de água. Perto do Largo da Maianga.',est:'pub',dias:12,h:250},
+ {id:3,tipo:'arrenda',titulo:'Casa T3 com quintal',prov:'Benguela',mun:'Lobito',bairro:'Compão',preco:280000,quartos:3,banhos:2,area:140,tel:'925333444',desc:'Casa recentemente pintada, quintal murado, água canalizada e energia da rede.',est:'pub',dias:27,h:160},
+ {id:4,tipo:'venda',titulo:'Casa T3 em construção avançada',prov:'Huambo',mun:'Huambo',bairro:'Bairro Académico',preco:32000000,quartos:3,banhos:2,area:180,tel:'926444555',desc:'Obra em acabamentos, terreno de 400 m² com documentos regularizados.',est:'pub',dias:5,h:30},
+ {id:5,tipo:'arrenda',titulo:'Quarto e sala independente',prov:'Luanda',mun:'Viana',bairro:'Zango 2',preco:90000,quartos:1,banhos:1,area:45,tel:'927555666',desc:'Entrada independente, ideal para uma pessoa ou casal. Ponto de água no quintal.',est:'pub',dias:18,h:340},
+ {id:6,tipo:'venda',titulo:'Apartamento T3 no centro',prov:'Huíla',mun:'Lubango',bairro:'Mapunda',preco:48000000,quartos:3,banhos:2,area:130,tel:'928666777',desc:'Prédio com elevador, estacionamento e vista para a Serra da Leba.',est:'pub',dias:9,h:280},
+ {id:7,tipo:'arrenda',titulo:'Moradia T4 para empresa',prov:'Cabinda',mun:'Cabinda',bairro:'Cidade Alta',preco:900000,quartos:4,banhos:3,area:260,tel:'929777888',desc:'Moradia espaçosa, serve para escritório ou residência. Segurança e vedação.',est:'pub',dias:24,h:190},
+ {id:8,tipo:'venda',titulo:'Terreno vedado com casa T2',prov:'Luanda',mun:'Cacuaco',bairro:'Kikolo',preco:21000000,quartos:2,banhos:1,area:90,tel:'923888999',desc:'Terreno de 600 m² vedado, casa pequena para ampliar. Documentos em dia.',est:'pub',dias:3,h:120},
+ {id:9,tipo:'arrenda',titulo:'Apartamento T1 novo',prov:'Benguela',mun:'Benguela',bairro:'Praia Morena',preco:220000,quartos:1,banhos:1,area:60,tel:'924999000',desc:'Apartamento novo, a 5 minutos da praia.',est:'pend',pago:true,dono:'joao@exemplo.ao',h:300},
+ {id:10,tipo:'venda',titulo:'Vivenda T3 geminada',prov:'Luanda',mun:'Belas',bairro:'Benfica',preco:58000000,quartos:3,banhos:2,area:170,tel:'925000111',desc:'Vivenda geminada com quintal pequeno e garagem.',est:'pend',pago:false,dono:'joao@exemplo.ao',h:90}];
+const fsrc=f=>/^https?:\/\//.test(f)?f:'/fotos/'+f;
+const grad=h=>`linear-gradient(135deg,hsl(${h} 55% 62%),hsl(${h+45} 50% 38%))`;
+
+function show(v){
+  if((v==='new'||v==='mine')&&!me){pendingView=v;authOpen('Entre ou crie uma conta para continuar.');return}
+  document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.querySelectorAll('.fx').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  if(v==='admin')adm(admTab);
+  if(v==='mine')mine();
+  window.scrollTo(0,0)}
+function closeAll(){document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'))}
+
+const IC={
+ bed:'<svg viewBox="0 0 24 24"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.5"/></svg>',
+ bath:'<svg viewBox="0 0 24 24"><path d="M4 12h16v2a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-2zM6 12V6a2 2 0 0 1 4 0M7 18l-1 2M17 18l1 2"/></svg>',
+ area:'<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+ sala:'<svg viewBox="0 0 24 24"><path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v5H3zM6 18v2M18 18v2"/></svg>',
+ quintal:'<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M12 14v7M9 21h6"/></svg>',
+ varanda:'<svg viewBox="0 0 24 24"><path d="M6 10V5h12v5M3 10h18M5 10v10M9 10v10M12 10v10M15 10v10M19 10v10M3 20h18"/></svg>',
+ cozinha:'<svg viewBox="0 0 24 24"><path d="M5 10h14v7a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3zM3 10h2M19 10h2M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2"/></svg>'};
+const PN={basico:'Básico',medio:'Médio',premium:'Premium'},PP={medio:3000,premium:5000};
+function cardFt(a){
+  const hab=['casa','apartamento'].includes(a.categoria);
+  const it=(hab?[[IC.bed,a.quartos],[IC.bath,a.banhos]]:[[IC.bath,a.banhos]]).concat([[IC.area,a.area!=null?a.area+' m²':null]]);
+  return '<div class="ft">'+it.filter(x=>x[1]!==null&&x[1]!==undefined&&x[1]!==''&&x[1]!==0).map(x=>`<span>${x[0]}${x[1]}</span>`).join('')+'</div>'}
+function card(a){return `<article class="c" tabindex="0" onclick="det(${a.id})" onkeydown="if(event.key==='Enter')det(${a.id})">
+ <div class="ph" style="background:${grad(a.h)}">${a.fotos[0]?`<img src="${fsrc(a.fotos[0])}" alt="" loading="lazy" onerror="this.remove()">`:'&#127968;'}<span class="tp">${a.tipo==='venda'?'Venda':'Arrendamento'}</span><span class="pl ${a.plano}">${PN[a.plano]}</span><span class="pr">${kz(a.preco)}${a.tipo==='arrenda'?'/mês':''}</span></div>
+ <div class="cb"><h3>${esc(a.titulo)}</h3><p class="mu">${esc(a.bairro)}, ${esc(a.mun)}, ${a.prov}</p>
+ ${cardFt(a)}</div></article>`}
+
+let PUB=[], rid=0;
+const mapa=r=>({id:+r.id,tipo:r.tipo==='venda'?'venda':'arrenda',categoria:r.categoria||'casa',titulo:r.titulo,prov:r.provincia,mun:r.municipio,bairro:r.bairro,preco:+r.preco,quartos:r.quartos,banhos:r.banhos,area:r.area_m2,salas:r.salas,cozinhas:r.cozinhas,varandas:r.varandas,quintal:r.quintal,tel:r.contacto,desc:r.descricao,dias:r.dias,fotos:r.fotos||[],h:(r.id*47)%360,est:'pub',plano:r.plano||'basico',bloqueado:!!r.bloqueado});
+
+async function render(){
+  const n=++rid,p=new URLSearchParams();
+  const cc=$('#fc').value,semQ=cc&&!['casa','apartamento'].includes(cc);
+  if(semQ)$('#fk').value='0';
+  $('#fk').parentElement.style.display=semQ?'none':'';
+  const q=$('#fq').value.trim(),t=$('#ft').value,pv=$('#fp').value,k=+$('#fk').value,m=+$('#fm').value,ca=$('#fc').value;
+  if(q)p.set('q',q);
+  if(t)p.set('tipo',t==='arrenda'?'arrendamento':'venda');
+  if(pv)p.set('provincia',pv);
+  if(ca)p.set('categoria',ca);
+  document.querySelectorAll('.cat').forEach(b=>b.classList.toggle('on',b.dataset.c===ca));
+  if(k)p.set('quartos',k);
+  if(m)p.set('max',m);
+  let r;
+  try{
+    const res=await fetch('/api/anuncios?'+p);
+    if(!res.ok)throw new Error();
+    r=(await res.json()).map(mapa).filter(a=>!ca||a.categoria===ca);
+  }catch(e){
+    if(n!==rid)return;
+    $('#cnt').textContent='';
+    $('#grid').innerHTML='<div class="empty">Não foi possível carregar as casas. Tente novamente.</div>';
+    return}
+  if(n!==rid)return;
+  PUB=r;
+  $('#cnt').textContent=r.length+(r.length===1?' casa encontrada':' casas encontradas');
+  $('#grid').innerHTML=r.length?r.map(card).join(''):'<div class="empty">Nenhuma casa encontrada. Tente outra localidade ou retire um filtro.</div>'}
+
+function feats(a){
+  const q=a.quintal===true?'Sim':a.quintal===false?'Não':null;
+  const ok=x=>x[1]!==null&&x[1]!==undefined;
+  const cel=x=>`<div>${x[0]}<b>${x[1]}</b><span>${x[2]}</span></div>`;
+  const hab=['casa','apartamento'].includes(a.categoria);
+  const P=(hab?[[IC.bed,a.quartos,'Quartos'],[IC.sala,a.salas,'Salas'],[IC.cozinha,a.cozinhas,'Cozinhas']]:[[IC.area,a.area,'Área (m²)']]).filter(ok);
+  const M=(hab?[[IC.bath,a.banhos,'Casas de banho'],[IC.area,a.area,'Área (m²)'],[IC.quintal,q,'Quintal'],[IC.varanda,a.varandas,'Varandas']]:[[IC.bath,a.banhos,'Casas de banho']]).filter(ok);
+  return '<div class="feat">'+P.map(cel).join('')+'</div>'
+    +(M.length?'<div class="feat" id="fmais" hidden>'+M.map(cel).join('')+'</div><button type="button" class="btn s g mb" id="fmaisb" onclick="maisToggle()">Mais</button>':'')}
+function maisToggle(){
+  const m=$('#fmais'),abrir=m.hidden;
+  m.hidden=!abrir;$('#fmaisb').textContent=abrir?'Menos':'Mais'}
+function det(id){
+  const a=PUB.find(x=>x.id===id);
+  $('#mdD').innerHTML=`<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+  ${a.fotos.length?`<div class="gal"><img id="gf" src="${fsrc(a.fotos[0])}" alt="Foto da casa"><div class="thumbs">${a.fotos.map(f=>`<img src="${fsrc(f)}" alt="" onclick="$('#gf').src=this.src">`).join('')}</div></div>`:`<div class="ph" style="background:${grad(a.h)}">&#127968;</div>`}
+  <h2 style="font-size:1.5rem">${esc(a.titulo)}</h2>
+  <p class="mu">${esc(a.bairro)}, ${esc(a.mun)}, ${a.prov}</p>
+  <p style="font:700 1.4rem var(--fh);margin:10px 0">${kz(a.preco)}${a.tipo==='arrenda'?' por mês':''}</p>
+  ${feats(a)}
+  <p>${esc(a.desc)}</p>
+  <p class="mu">Anúncio activo por mais ${a.dias||30} dias. Código ${String(a.id).padStart(4,'0')}</p>
+  ${a.bloqueado?`<div class="lk"><b>Contacto do dono bloqueado</b><p class="mu">Casa do plano ${PN[a.plano]}. Veja os contactos de todas as casas deste plano durante 3 dias por ${kz(PP[a.plano])}.</p><button class="btn" onclick="pedirAcesso('${a.plano}')">Desbloquear contacto</button></div>`
+  :`<a class="wa" href="https://wa.me/244${a.tel.replace(/\D/g,'')}" target="_blank" rel="noopener">Falar com o dono no WhatsApp</a>
+  <p class="mu" style="text-align:center;margin-top:8px">Ou ligue: ${esc(a.tel)}</p>`}`;
+  $('#ovD').classList.add('on')}
+
+/* Acessos */
+const refA=id=>'ACE '+String(id).padStart(4,'0');
+const PAG={express:'9XX XXX XXX',iban:'AO06 0000 0000 0000 0000 0000 0'}; /* PREENCHE COM OS TEUS DADOS */
+async function pedirAcesso(plano){
+  if(!me){authOpen('Entre ou crie uma conta para desbloquear contactos.');return}
+  try{
+    const d=await api('/api/acessos',{plano});
+    $('#mdD').innerHTML=`<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+    <h2 style="font-size:1.4rem">Acesso ${PN[plano]}</h2>
+    <p>Pague <b>${kz(d.preco)}</b> com a referência <b>${refA(d.id)}</b> (Multicaixa ou transferência).</p>
+    <p class="mu">Depois de confirmarmos o pagamento, vê os contactos de todas as casas do plano ${PN[plano]} durante 3 dias.</p>
+    <form onsubmit="enviarComp(event,${d.id})" style="margin-top:14px">
+      <label>Comprovativo de pagamento (PDF ou foto)</label>
+      <input type="file" name="comp" accept=".pdf,image/*" required>
+      ${d.comprovativo?'<p class="mu" style="margin-top:6px">Já enviou um comprovativo. Pode enviar outro para o substituir.</p>':''}
+      <div class="er" id="eC"></div>
+      <button class="btn" style="width:100%;margin-top:6px">Enviar comprovativo</button>
+    </form>`;
+    $('#ovA').classList.remove('on');$('#ovD').classList.add('on');
+  }catch(err){alert(err.message)}}
+async function enviarComp(e,id){
+  e.preventDefault();
+  const form=e.target,btn=form.querySelector('button'),er=$('#eC');er.textContent='';
+  const file=form.elements.comp.files[0];
+  if(!file)return;
+  btn.disabled=true;
+  try{
+    const f=new FormData();
+    if(file.type.startsWith('image/'))f.append('comprovativo',await reduzir(file),'comprovativo.jpg');
+    else f.append('comprovativo',file);
+    const r=await fetch('/api/acessos/'+id+'/comprovativo',{method:'POST',body:f});
+    const d=await r.json().catch(()=>({}));
+    if(r.status===401){setMe(null);authOpen('A sessão expirou. Entre novamente.');return}
+    if(!r.ok)throw new Error(d.erro||'Algo correu mal. Tente novamente.');
+    $('#mdD').innerHTML='<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button><h2 style="font-size:1.4rem">Comprovativo enviado</h2><p>Vamos confirmar o pagamento e libertar o acesso. Pode acompanhar em «Os meus anúncios».</p><button class="btn" style="width:100%;margin-top:12px" onclick="closeAll();render()">Fechar</button>';
+  }catch(err){er.textContent=err.message}
+  finally{btn.disabled=false}}
+
+/* Contas */
+function authOpen(msg){tab('l');$('#eL').textContent=msg||'';$('#ovA').classList.add('on')}
+function tab(t){$('#fS').style.display='none';$('#fL').style.display=t==='l'?'':'none';$('#fR').style.display=t==='r'?'':'none';
+  $('#aL').classList.toggle('g',t!=='l');$('#aR').classList.toggle('g',t!=='r')}
+function setMe(u){me=u;$('#nAuth').textContent=u?u.nome.split(' ')[0]+' ▾':'Entrar';
+  $('#nAdmin').style.display=u&&u.papel==='admin'?'':'none';
+  $('#umm').classList.remove('on');closeAll();render();
+  if(u&&pendingView){const v=pendingView;pendingView=null;show(v)}
+  else if(u)planosAuto()}
+async function api(url,corpo){
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo||{})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(d.erro||'Algo correu mal. Tente novamente.');
+  return d}
+async function login(e){e.preventDefault();const f=new FormData(e.target);$('#eL').textContent='';
+  try{setMe(await api('/api/login',{email:f.get('email'),senha:f.get('pass')}))}
+  catch(err){$('#eL').textContent=err.message}}
+async function reg(e){e.preventDefault();const f=new FormData(e.target);$('#eR').textContent='';
+  try{setMe(await api('/api/registo',{nome:f.get('nome'),telefone:f.get('tel'),email:f.get('email'),senha:f.get('pass')}))}
+  catch(err){$('#eR').textContent=err.message}}
+$('#nAuth').onclick=()=>{if(me)$('#umm').classList.toggle('on');else authOpen()};
+document.addEventListener('click',e=>{if(!e.target.closest('#nAuth'))$('#umm').classList.remove('on')});
+async function sair(){
+  try{await api('/api/logout')}catch(e){}
+  try{sessionStorage.removeItem('plv')}catch(e){}
+  setMe(null);show('home')}
+
+const PD={
+ basico:'Contacto visível para todos. Fala directamente com o dono das casas do plano Básico.',
+ medio:'Veja o contacto do dono de todas as casas do plano Médio durante 3 dias.',
+ premium:'Veja o contacto do dono de todas as casas do plano Premium durante 3 dias.'};
+async function planosAuto(){
+  if(!me||me.papel==='admin')return;
+  try{if(sessionStorage.getItem('plv'))return}catch(e){}
+  try{
+    const r=await fetch('/api/acessos');if(!r.ok)return;
+    const rows=await r.json();
+    if(rows.some(a=>a.pago&&!a.expirado))return;
+    try{sessionStorage.setItem('plv','1')}catch(e){}
+    planosOpen()
+  }catch(e){}}
+async function planosOpen(){
+  if(!me){authOpen();return}
+  let rows=[];
+  try{const r=await fetch('/api/acessos');if(r.ok)rows=await r.json()}catch(e){}
+  const act=p=>rows.find(a=>a.plano===p&&a.pago&&!a.expirado);
+  const pen=p=>rows.some(a=>a.plano===p&&!a.pago);
+  const tem=rows.some(a=>a.pago&&!a.expirado);
+  const cartao=p=>{
+    const a=p==='basico'?null:act(p),cur=p==='basico'?!tem:!!a;
+    const btn=p==='basico'?'':a?`<button class="btn" disabled>Activo · ${a.dias} dia(s)</button>`
+      :`<button class="btn" onclick="pedirAcesso('${p}')">${pen(p)?'Ver como pagar':'Pagar '+kz(PP[p])}</button>`;
+    return `<div class="pc${cur?' cur':''}"><div><h3>${PN[p]}${cur?'<span class="bd g">O seu plano</span>':''}</h3>
+      <div class="pp">${p==='basico'?'Grátis':kz(PP[p])+' <span class="mu">/ 3 dias</span>'}</div>
+      <p class="mu">${PD[p]}</p></div>${btn}</div>`};
+  $('#mdD').innerHTML=`<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+    <h2 style="font-size:1.5rem">Actualizar plano</h2>
+    <p class="mu">${tem?'Tem acesso activo.':'Está no plano Básico. Desbloqueie os contactos das casas Médio e Premium.'}</p>
+    <div class="pls">${['basico','medio','premium'].map(cartao).join('')}</div>`;
+  $('#ovA').classList.remove('on');$('#ovD').classList.add('on')}
+function infoOpen(ed){
+  const v=x=>x?esc(x):'—';
+  $('#mdD').innerHTML=`<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+    <h2 style="font-size:1.4rem">As minhas informações</h2>`+(ed
+    ?`<form onsubmit="guardarInfo(event)"><div class="f">
+      <div class="full"><label>Nome</label><input name="nome" value="${esc(me.nome||'')}" required></div>
+      <div class="full"><label>Telefone</label><input name="tel" value="${esc(me.telefone||'')}" required></div>
+      <div class="full"><label>Email</label><input name="email" type="email" value="${esc(me.email||'')}" required></div></div>
+      <div class="er" id="eI"></div>
+      <button class="btn" style="width:100%">Guardar</button>
+      <button type="button" class="btn g" style="width:100%;margin-top:8px" onclick="infoOpen()">Cancelar</button></form>`
+    :`<div class="f"><div class="full"><label>Nome</label><p style="margin:0;font-weight:600">${v(me.nome)}</p></div>
+      <div class="full"><label>Telefone</label><p style="margin:0;font-weight:600">${v(me.telefone)}</p></div>
+      <div class="full"><label>Email</label><p style="margin:0;font-weight:600">${v(me.email)}</p></div></div>
+      <button class="btn" style="width:100%;margin-top:16px" onclick="infoOpen(true)">Editar informações</button>
+      <button class="btn g" style="width:100%;margin-top:8px" onclick="senhaOpen()">Mudar palavra-passe</button>`);
+  $('#ovA').classList.remove('on');$('#ovD').classList.add('on')}
+function senhaOpen(){
+  $('#mdD').innerHTML=`<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+    <h2 style="font-size:1.4rem">Mudar palavra-passe</h2>
+    <form onsubmit="guardarSenha(event)"><div class="f">
+      <div class="full"><label>Palavra-passe actual</label><input name="atual" type="password" required autocomplete="current-password"></div>
+      <div class="full"><label>Nova palavra-passe</label><input name="nova" type="password" minlength="6" required autocomplete="new-password"></div>
+      <div class="full"><label>Repetir a nova palavra-passe</label><input name="rep" type="password" minlength="6" required autocomplete="new-password"></div></div>
+      <div class="er" id="eP"></div>
+      <button class="btn" style="width:100%">Guardar</button>
+      <button type="button" class="btn g" style="width:100%;margin-top:8px" onclick="infoOpen()">Cancelar</button></form>`;
+  $('#ovA').classList.remove('on');$('#ovD').classList.add('on')}
+async function guardarSenha(e){
+  e.preventDefault();const f=new FormData(e.target);$('#eP').textContent='';
+  if(f.get('nova')!==f.get('rep')){$('#eP').textContent='As palavras-passe novas não coincidem.';return}
+  try{
+    await api('/api/eu/senha',{atual:f.get('atual'),nova:f.get('nova')});
+    $('#mdD').innerHTML='<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button><h2 style="font-size:1.4rem">Palavra-passe alterada</h2><p>Já pode entrar com a nova palavra-passe.</p><button class="btn" style="width:100%;margin-top:12px" onclick="closeAll()">Fechar</button>';
+  }catch(err){$('#eP').textContent=err.message}}
+async function guardarInfo(e){
+  e.preventDefault();const f=new FormData(e.target);$('#eI').textContent='';
+  try{
+    me=await api('/api/eu/editar',{nome:f.get('nome'),telefone:f.get('tel'),email:f.get('email')});
+    $('#nAuth').textContent=me.nome.split(' ')[0]+' ▾';
+    infoOpen()
+  }catch(err){$('#eI').textContent=err.message}}
+
+/* Anunciar */
+const CAT_HAB=['casa','apartamento'],CAT_COM=['loja','armazem','escritorio'];
+function catForm(){
+  const f=$('#nf'),c=f.elements.categoria.value;
+  const hab=CAT_HAB.includes(c),com=CAT_COM.includes(c);
+  const campo=(n,ver,req)=>{
+    const i=f.elements[n],d=i.closest('div');
+    d.style.display=ver?'':'none';
+    i.disabled=!ver;
+    i.required=ver&&req;
+    const l=d.querySelector('label');
+    if(l)l.textContent=l.textContent.replace(' (opcional)','')+(ver&&!req?' (opcional)':'')};
+  campo('quartos',hab,true);
+  campo('banhos',hab||com,hab);
+  campo('salas',hab,false);
+  campo('cozinhas',hab,false);
+  campo('varandas',hab,false);
+  campo('quintal',hab,false);
+  f.elements.banhos.min=hab?1:0}
+function thumbs(){$('#th').innerHTML=[...$('#nfo').files].map(f=>`<img src="${URL.createObjectURL(f)}" alt="">`).join('')}
+async function reduzir(file){
+  try{
+    const im=await createImageBitmap(file);
+    const k=Math.min(1,1600/Math.max(im.width,im.height));
+    const c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    const b=await new Promise(r=>c.toBlob(r,'image/jpeg',.82));
+    return b||file;
+  }catch(e){return file}}
+async function submitNew(e){
+  e.preventDefault();
+  const form=e.target,f=new FormData(form),btn=form.querySelector('button');
+  f.set('tipo',f.get('tipo')==='venda'?'venda':'arrendamento');
+  $('#nok').innerHTML='';
+  btn.disabled=true;
+  try{
+    const fotos=[...$('#nfo').files];
+    if(fotos.length<1)throw new Error('Junte pelo menos uma foto da casa.');
+    if(fotos.length>8)throw new Error('Pode juntar no máximo 8 fotos.');
+    for(const x of fotos)f.append('fotos',await reduzir(x),'foto.jpg');
+    const r=await fetch('/api/anuncios',{method:'POST',body:f});
+    const d=await r.json().catch(()=>({}));
+    if(r.status===401){setMe(null);pendingView='new';authOpen('A sessão expirou. Entre novamente.');return}
+    if(!r.ok)throw new Error(d.erro||'Algo correu mal. Tente novamente.');
+    form.reset();$('#th').innerHTML='';catForm();
+    const id=d.id;
+    $('#nok').innerHTML='<div class="ok"><b>Anúncio enviado.</b> Está em revisão. Depois de validarmos o documento, fica publicado.</div>';
+  }catch(err){
+    $('#nok').innerHTML='<div class="er">'+esc(err.message)+'</div>';
+  }finally{btn.disabled=false}}
+
+/* Os meus anúncios */
+const ref=id=>`${String(id).padStart(3,'0')} 482 ${String(id*7).padStart(3,'0')}`;
+async function mine(){
+  const el=$('#mine');
+  el.innerHTML='<p class="mu">A carregar...</p>';
+  acessos();
+  let rows;
+  try{
+    const r=await fetch('/api/meus-anuncios');
+    if(r.status===401){setMe(null);pendingView='mine';authOpen('A sessão expirou. Entre novamente.');return}
+    if(!r.ok)throw new Error();
+    rows=await r.json();
+  }catch(e){el.innerHTML='<p class="er">Não foi possível carregar.</p>';return}
+  if(!rows.length){el.innerHTML='<p class="mu">Ainda não tem anúncios. Use «Anunciar» para publicar o primeiro.</p>';return}
+  el.innerHTML=`<table class="tb"><tr><th>Anúncio</th><th>Estado</th><th>Acções</th></tr>${rows.map(a=>{
+    let bd,info;
+    if(a.concluido){bd='<span class="bd g">'+(a.tipo==='venda'?'Vendida':'Arrendada')+'</span>';info='Anúncio concluído. Já não está visível.'}
+    else if(a.expirado){bd='<span class="bd y">Expirado</span>';info='O anúncio já não está visível. Renove para o publicar de novo, sem custos, por mais 30 dias.'}
+    else if(a.estado==='publicado'){bd='<span class="bd g">Publicado</span>';info='Expira em '+a.dias+' dias.'}
+    else if(a.motivo_rejeicao){bd='<span class="bd" style="background:#fbe4e2;color:var(--er)">Rejeitado</span>';info='Motivo: '+esc(a.motivo_rejeicao)+'. Remova este anúncio e envie um novo, corrigido.'}
+    else if(a.pago){bd='<span class="bd y">Em revisão</span>';info='À espera da validação do documento.'}
+    else{bd='<span class="bd y">Por pagar</span>';info='Pague 5.000 Kz com a referência <b>'+ref(a.id)+'</b>.'}
+    return `<tr>
+      <td><div style="display:flex;gap:10px;align-items:center">${a.fotos[0]?`<img src="${fsrc(a.fotos[0])}" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:8px">`:''}<div><b>${esc(a.titulo)}</b><br><span class="mu">${esc(a.municipio)}, ${esc(a.provincia)} &middot; ${kz(a.preco)}${a.tipo==='arrendamento'?'/mês':''}</span></div></div></td>
+      <td>${bd}<br><span class="mu">${info}</span></td>
+      <td>${a.estado==='publicado'&&!a.expirado&&!a.concluido?`<button class="btn s g" onclick="meuConcluir(${a.id})">${a.tipo==='venda'?'Vendida':'Arrendada'}</button> `:''}${a.expirado?`<button class="btn s" onclick="meuRenovar(${a.id})">Renovar</button> `:''}<button class="btn s r" onclick="meuRemover(${a.id})">Remover</button></td></tr>`}).join('')}</table>`}
+async function meuConcluir(id){
+  if(!confirm('Marcar como concluído? O anúncio deixa de aparecer na página inicial.'))return;
+  try{await api('/api/meus-anuncios/'+id+'/concluir')}catch(err){alert(err.message);return}
+  await mine();render()}
+async function meuRenovar(id){
+  try{await api('/api/meus-anuncios/'+id+'/renovar')}catch(err){alert(err.message);return}
+  await mine();render()}
+async function meuRemover(id){
+  if(!confirm('Remover este anúncio, as fotos e o documento? Não dá para desfazer.'))return;
+  try{await api('/api/meus-anuncios/'+id+'/remover')}catch(err){alert(err.message);return}
+  await mine();render()}
+
+async function acessos(){
+  const el=$('#acc');
+  try{
+    const r=await fetch('/api/acessos');
+    if(!r.ok)throw new Error();
+    const rows=await r.json();
+    el.innerHTML=rows.length?`<table class="tb"><tr><th>Plano</th><th>Estado</th></tr>${rows.map(a=>`<tr><td><b>${PN[a.plano]}</b><br><span class="mu">${kz(a.preco)} &middot; 3 dias</span></td><td>${!a.pago?(a.comprovativo?'<span class="bd y">Em revisão</span><br><span class="mu">Comprovativo enviado. À espera da confirmação.</span>':'<span class="bd y">Por pagar</span><br><span class="mu">Pague por Express '+PAG.express+' ou IBAN '+PAG.iban+', com o descritivo <b>'+refA(a.id)+'</b>.</span>')+'<br><button class="btn s" style="margin-top:6px" onclick="pedirAcesso(\''+a.plano+'\')">'+(a.comprovativo?'Substituir comprovativo':'Enviar comprovativo')+'</button>':a.expirado?'<span class="bd y">Expirado</span>':'<span class="bd g">Activo</span><br><span class="mu">Termina em '+a.dias+' dia(s).</span>'}</td></tr>`).join('')}</table>`:'<p class="mu">Ainda não comprou acesso a casas médias ou premium.</p>';
+  }catch(e){el.innerHTML='<p class="er">Não foi possível carregar.</p>'}}
+
+async function admAcessos(){
+  let rows;
+  try{const r=await fetch('/api/admin/acessos');if(!r.ok)throw new Error();rows=await r.json()}
+  catch(e){if(admTab==='c')$('#adm').innerHTML='<p class="er">Não foi possível carregar.</p>';return}
+  if(admTab!=='c')return;
+  $('#adm').innerHTML=rows.length?`<table class="tb"><tr><th>Cliente</th><th>Plano</th><th>Descritivo</th><th>Comprovativo</th><th>Acções</th></tr>${rows.map(a=>`<tr><td><b>${esc(a.nome)}</b><br><span class="mu">${esc(a.email)}</span></td><td>${PN[a.plano]}<br><span class="mu">${kz(a.preco)}</span></td><td>${refA(a.id)}</td><td>${a.comprovativo?`<a href="/api/admin/acessos/${a.id}/comprovativo" target="_blank" rel="noopener">Ver comprovativo</a>`:'<span class="bd y">Em falta</span>'}</td>
+    <td><button class="btn s"${a.comprovativo?'':' disabled'} onclick="admAcesso('pago',${a.id})">Confirmar pagamento</button> <button class="btn s r" onclick="admAcesso('remover',${a.id})">Rejeitar</button></td></tr>`).join('')}</table>`:'<p class="mu">Nada aqui por agora.</p>'}
+async function admAcesso(acao,id){
+  try{await api('/api/admin/acessos/'+id+'/'+acao)}catch(err){alert(err.message);return}
+  await adm('c')}
+
+/* Administração */
+async function adm(t){
+  admTab=t;$('#tP').classList.toggle('g',t!=='p');$('#tA').classList.toggle('g',t!=='a');$('#tC').classList.toggle('g',t!=='c');
+  $('#adm').innerHTML='<p class="mu">A carregar...</p>';
+  if(t==='c')return admAcessos();
+  let rows;
+  try{
+    const r=await fetch('/api/admin/anuncios?estado='+(t==='p'?'pendente':'publicado'));
+    if(!r.ok)throw new Error();
+    rows=await r.json();
+  }catch(e){if(t===admTab)$('#adm').innerHTML='<p class="er">Não foi possível carregar.</p>';return}
+  if(t!==admTab)return;
+  ADM=rows;
+  if(!rows.length){$('#adm').innerHTML='<p class="mu">Nada aqui por agora.</p>';return}
+  $('#adm').innerHTML=t==='p'
+   ?`<table class="tb"><tr><th>Anúncio</th><th>Enviado por</th><th>Documento</th><th>Taxa</th><th>Acções</th></tr>${rows.map(a=>`<tr><td><b>${esc(a.titulo)}</b><br><span class="mu">${esc(a.municipio)}, ${esc(a.provincia)} &middot; ${kz(a.preco)}</span></td><td>${esc(a.dono_nome)}<br><span class="mu">${esc(a.dono_email)}</span></td>
+     <td><a href="/api/admin/anuncios/${a.id}/documento" target="_blank" rel="noopener">Ver documento</a><div class="thumbs">${a.fotos.map(f=>`<img src="/fotos/${f}" alt="" onclick="admFotos(${a.id})">`).join('')}</div></td>
+     <td><span class="bd ${a.pago?'g':'y'}">${a.pago?'Paga':'Por confirmar'}</span><br><select onchange="admPlano(${a.id},this.value)" style="margin-top:6px;padding:4px 6px">${['basico','medio','premium'].map(p=>`<option value="${p}"${a.plano===p?' selected':''}>${PN[p]}</option>`).join('')}</select></td>
+     <td>${a.pago?'':`<button class="btn s g" onclick="admAcao('pago',${a.id})">Confirmar taxa</button> `}<button class="btn s" onclick="admAcao('publicar',${a.id})">Publicar</button> <button class="btn s r" onclick="admRejeitar(${a.id})">Rejeitar</button></td></tr>`).join('')}</table>`
+   :`<table class="tb"><tr><th>Anúncio</th><th>Expira em</th><th>Acções</th></tr>${rows.map(a=>`<tr><td><b>${esc(a.titulo)}</b><br><span class="mu">${esc(a.municipio)}, ${esc(a.provincia)}</span><div class="thumbs">${a.fotos.map(f=>`<img src="/fotos/${f}" alt="" onclick="admFotos(${a.id})">`).join('')}</div></td><td>${a.expirado?'<span class="bd y">Expirado</span>':a.dias+' dias'}</td>
+     <td><button class="btn s r" onclick="admAcao('remover',${a.id})">Remover</button></td></tr>`).join('')}</table>`}
+async function admRejeitar(id){
+  const m=prompt('Motivo da rejeição (o anunciante vai ver):');
+  if(m===null)return;
+  try{await api('/api/admin/anuncios/'+id+'/rejeitar',{motivo:m})}catch(err){alert(err.message);return}
+  await adm(admTab)}
+async function admPlano(id,plano){
+  try{await api('/api/admin/anuncios/'+id+'/plano',{plano})}catch(err){alert(err.message)}
+  await adm(admTab)}
+let ADM=[];
+function admFotos(id){
+  const a=ADM.find(x=>x.id==id);if(!a)return;
+  $('#mdD').innerHTML=`<button class="x" onclick="closeAll()" aria-label="Fechar">&times;</button>
+    <h2 style="font-size:1.3rem;margin-bottom:4px">${esc(a.titulo)} (${a.fotos.length} fotos)</h2>
+    <p class="mu" style="margin-bottom:10px">${a.tipo==='venda'?'Venda':'Arrendamento'} &middot; ${kz(a.preco)}${a.tipo==='arrendamento'?'/mês':''}</p>
+    <div class="fee" style="margin:0 0 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><b>Plano da casa:</b>
+      <select onchange="admPlano(${a.id},this.value)" style="width:auto">${['basico','medio','premium'].map(p=>`<option value="${p}"${a.plano===p?' selected':''}>${PN[p]}</option>`).join('')}</select></div>
+    ${a.fotos.map(f=>`<a href="/fotos/${f}" target="_blank" rel="noopener"><img src="/fotos/${f}" alt="" style="width:100%;border-radius:10px;margin-bottom:10px;display:block"></a>`).join('')}`;
+  $('#ovD').classList.add('on')}
+async function admAcao(acao,id){
+  if(acao==='remover'&&!confirm('Remover este anúncio e o documento? Não dá para desfazer.'))return;
+  try{await api('/api/admin/anuncios/'+id+'/'+acao)}catch(err){alert(err.message);return}
+  await adm(admTab);render()}
+
+/* Animação do topo */
+(function(){
+  const cv=$('#hc');if(!cv)return;
+  const cx=cv.getContext('2d');
+  const LADO=1; /* 1 = pontos no canto direito, -1 = canto esquerdo */
+  const COR=['rgba(107, 77, 0, 0.619)','#d2cdc7ab'],PONTO=['#fffaf3','#d4aa70'],DUR=[7],TOT=7;
+  const parado=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const R=i=>{const x=Math.sin(i*12.9898+1.7)*43758.5453;return x-Math.floor(x)};
+  const lim=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const suave=t=>t*t*(3-2*t);
+  const bz=(p0,p1,p2,p3,t)=>{const u=1-t;return u*u*u*p0+3*u*u*t*p1+3*u*t*t*p2+t*t*t*p3};
+  let W=0,H=0,dpr=1,A=1;
+  const ini=performance.now();
+
+  function traco(P,a,b){
+    const seg=[];let L=0;
+    for(let k=0;k<P.length-1;k++){const l=Math.hypot(P[k+1][0]-P[k][0],P[k+1][1]-P[k][1]);seg.push(l);L+=l}
+    const s0=a*L,s1=b*L;let acc=0,ja=false;
+    cx.beginPath();
+    for(let k=0;k<seg.length;k++){
+      const l=seg[k],lo=Math.max(s0,acc),hi=Math.min(s1,acc+l);
+      if(hi>lo){
+        const dx=P[k+1][0]-P[k][0],dy=P[k+1][1]-P[k][1];
+        const x1=P[k][0]+dx*(lo-acc)/l,y1=P[k][1]+dy*(lo-acc)/l;
+        const x2=P[k][0]+dx*(hi-acc)/l,y2=P[k][1]+dy*(hi-acc)/l;
+        if(!ja){cx.moveTo(x1,y1);ja=true}else cx.lineTo(x1,y1);
+        cx.lineTo(x2,y2)}
+      acc+=l}}
+
+  function linhas(t){
+    const N=9;
+    for(let i=0;i<N;i++){
+      const w=W*(.1+.12*R(i)),d=H*(.3+.6*R(i+20)),x0=W*(i+.5)/N-w/2;
+      const P=[[x0,-4],[x0,d],[x0+w,d],[x0+w,-4]]; /* baixo, direita, cima */
+      const u=lim((t-i*.35)/3.4,0,1);
+      const a=suave(lim((u-.4)/.6,0,1)),b=suave(lim(u/.6,0,1));
+      if(b-a<.001)continue;
+      traco(P,a,b);
+      cx.strokeStyle=COR[i%2];cx.lineWidth=i%2?2.2:3;cx.stroke()}}
+
+  function pontos(t){
+    const g=24,m=14,cols=Math.floor((W-m)/g)+1,rows=Math.floor((H-m)/g)+1,tot=Math.max(1,cols+rows-2);
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const u=lim((t-(r+c)/tot*3.8)/.6,0,1);
+      if(u<=0)continue;
+      const x=LADO>0?W-m-c*g:m+c*g,y=m+r*g;
+      cx.fillStyle=PONTO[(r+c)%2];
+      cx.beginPath();cx.arc(x,y,(2.4+Math.sin(t*2+r+c)*.5)*suave(u),0,7);cx.fill()}}
+
+  function aneis(t){
+    for(let i=0;i<5;i++){
+      const u=lim((t-i*.8)/2.8,0,1);
+      if(u<=0||u>=1)continue;
+      const x=W*(.12+.76*R(i+40)),y=H*(.15+.5*R(i+50));
+      cx.globalAlpha=A*(1-u);
+      cx.strokeStyle=COR[i%2];cx.lineWidth=2;
+      cx.beginPath();cx.arc(x,y,suave(u)*H*.7,0,7);cx.stroke()}
+    const f=suave(lim((t-2.5)/1.5,0,1));
+    for(let i=0;i<46;i++){
+      const x=W*R(i+70)+Math.sin(t*.8+i)*8,v=10+22*R(i+90);
+      let y=(H*R(i+110)-t*v)%H;if(y<0)y+=H;
+      cx.globalAlpha=A*f*(.5+.5*Math.sin(t*2.2+i*1.7))*.85;
+      cx.fillStyle=COR[i%2];
+      cx.beginPath();cx.arc(x,y,.8+1.8*R(i+130),0,7);cx.fill()}}
+
+  const FASES=[linhas];
+  function desenha(f,t){
+    cx.setTransform(dpr,0,0,dpr,0,0);
+    cx.clearRect(0,0,W,H);
+    cx.lineCap='round';
+    cx.globalAlpha=A*f*(.75+.25*Math.sin(t*2.2+1.7));
+    cx.globalAlpha=A;
+    FASES[f](t);
+    cx.globalAlpha=1}
+  function ajusta(){
+    const r=cv.getBoundingClientRect();
+    W=r.width;H=r.height;dpr=Math.min(devicePixelRatio||1,2);
+    cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+    if(parado&&W)desenha(0,3.2)}
+  function quadro(now){
+    requestAnimationFrame(quadro);
+    if(document.hidden||!W)return;
+    let t=((now-ini)/1000)%TOT,f=0;
+    while(t>=DUR[f]){t-=DUR[f];f++}
+    desenha(f,t)}
+  new ResizeObserver(ajusta).observe(cv);
+  ajusta();
+  if(!parado)requestAnimationFrame(quadro)})();
+
+/* Slides */
+let slI=0,slPausa=false;
+function slVer(i){
+  const s=document.querySelectorAll('#sl .s'),d=document.querySelectorAll('#slDt button');
+  slI=(i+s.length)%s.length;
+  s.forEach((e,k)=>e.classList.toggle('on',k===slI));
+  d.forEach((e,k)=>e.classList.toggle('on',k===slI))}
+function slMove(n){slVer(slI+n)}
+(function(){
+  const sl=$('#sl'),n=sl.querySelectorAll('.s').length;
+  $('#slDt').innerHTML=Array.from({length:n},(_,k)=>`<button onclick="slVer(${k})" aria-label="Slide ${k+1}"></button>`).join('');
+  slVer(0);
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const hr=$('.hero');
+  hr.onmouseenter=()=>slPausa=true;
+  hr.onmouseleave=()=>slPausa=false;
+  setInterval(()=>{if(!slPausa&&!document.hidden)slMove(1)},4000)})();
+
+/* Barra de pesquisa */
+function fabToggle(){
+  const o=$('#bar').classList.toggle('open');
+  $('#fabT').textContent=o?'Fechar':'Procurar'}
+document.addEventListener('click',e=>{
+  const b=$('#bar');
+  if(!b.classList.contains('open')||e.target.closest('#bar,#fab'))return;
+  b.classList.remove('open');$('#fabT').textContent='Procurar'});
+function procurar(){
+  $('#bar').classList.remove('open');$('#fabT').textContent='Procurar';
+  render();$('#cnt').scrollIntoView({behavior:'smooth',block:'start'})}
+
+/* Arranque */
+$('#fp').innerHTML='<option value="">Todas</option>'+PROV.map(p=>`<option>${p}</option>`).join('');
+$('#np').innerHTML=PROV.map(p=>`<option>${p}</option>`).join('');
+const CATS=[
+ ['','Todas','<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/>'],
+ ['casa','Casas','<path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/>'],
+ ['apartamento','Apartamentos','<path d="M6 21V4h12v17M3 21h18M10 8h1M13 8h1M10 12h1M13 12h1M10 16h4v5"/>'],
+ ['loja','Lojas','<path d="M4 9l1-5h14l1 5M4 9a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 6 0 2.5 2.5 0 0 0 5 0M5 12v8h14v-8M10 20v-5h4v5"/>'],
+ ['armazem','Armazéns','<path d="M3 9l9-5 9 5v11H3zM8 20v-6h8v6M8 17h8"/>'],
+ ['escritorio','Escritórios','<path d="M4 8h16v11H4zM9 8V5h6v3M4 13h16"/>'],
+ ['terreno','Terrenos','<path d="M2 19l6-9 4 5 3-4 7 8zM2 22h20"/>']];
+$('#cats').innerHTML=CATS.map(c=>`<button type="button" class="cat" role="tab" data-c="${c[0]}"><svg viewBox="0 0 24 24">${c[2]}</svg>${c[1]}</button>`).join('');
+$('#cats').onclick=e=>{const b=e.target.closest('.cat');if(!b)return;$('#fc').value=b.dataset.c;render()};
+catForm();
+render();
+fetch('/api/eu').then(r=>r.json()).then(u=>{if(u)setMe(u)}).catch(()=>{});
+
+async function setup(e){e.preventDefault();const f=new FormData(e.target);$('#eS').textContent='';
+  try{setMe(await api('/api/admin/inicial',{nome:f.get('nome'),telefone:f.get('tel'),email:f.get('email'),senha:f.get('pass'),chave:f.get('chave')}));e.target.reset()}
+  catch(err){$('#eS').textContent=err.message}}
+document.addEventListener('keydown',async e=>{
+  if(!(e.ctrlKey&&(e.key==='.'||e.code==='Period')))return;
+  e.preventDefault();
+  try{
+    const d=await (await fetch('/api/admin/estado')).json();
+    authOpen();
+    if(!d.existe){$('#fL').style.display='none';$('#fS').style.display='';$('#eS').textContent=''}
+  }catch(err){authOpen('Não foi possível verificar o servidor.')}
+});
+</script>
+</body>
+</html>
