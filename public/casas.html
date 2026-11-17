@@ -287,7 +287,8 @@ body:has(.bar.open) .fx{display:none}
       <div class="full"><label>Nome</label><input name="nome" required></div>
       <div><label>Telefone</label><input name="tel" required></div>
       <div><label>Email</label><input name="email" type="email" required></div>
-      <div class="full"><label>Palavra-passe</label><input name="pass" type="password" minlength="6" required></div>
+      <div class="full"><label>Palavra-passe</label><input name="pass" type="password" minlength="6" required autocomplete="new-password"></div>
+      <div class="full"><label>Confirmar palavra-passe</label><input name="pass2" type="password" minlength="6" required autocomplete="new-password"></div>
     </div>
     <div class="er" id="eR"></div>
     <button class="btn" style="width:100%">Criar conta</button>
@@ -468,6 +469,7 @@ async function login(e){e.preventDefault();const f=new FormData(e.target);$('#eL
   try{setMe(await api('/api/login',{email:f.get('email'),senha:f.get('pass')}))}
   catch(err){$('#eL').textContent=err.message}}
 async function reg(e){e.preventDefault();const f=new FormData(e.target);$('#eR').textContent='';
+  if(f.get('pass')!==f.get('pass2')){$('#eR').textContent='As palavras-passe não coincidem.';return}
   try{setMe(await api('/api/registo',{nome:f.get('nome'),telefone:f.get('tel'),email:f.get('email'),senha:f.get('pass')}))}
   catch(err){$('#eR').textContent=err.message}}
 $('#nAuth').onclick=()=>{if(me)$('#umm').classList.toggle('on');else authOpen()};
