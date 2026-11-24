@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CasaDirecta — Casas sem comissão</title>
+<title>CasaDirecta — Casas para venda e arrendamento</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#faf6ef;--on-bg:#fffaf3;--on-bg2:#fbeed8;--card:#ffffff;--tx:#2a1301;--mu:#6b5440;--ac:#6e3f12;--ac2:#f1e4d0;--inp:#f7efe3;--tag:#ffc93c;--bd:#e3d3bd;--ok:#12805c;--er:#b3261e;--fh:'Bricolage Grotesque',system-ui,sans-serif;--fb:'Figtree',system-ui,sans-serif;color-scheme:light}
@@ -191,8 +191,8 @@ body:has(.bar.open) .fx{display:none}
   <section class="hero">
     <canvas class="hc" id="hc" aria-hidden="true"></canvas>
     <div class="ht">
-    <h1>Casa sem comissão.</h1>
-    <p>Compre ou arrende falando directamente com o dono. Sem intermediários, sem pagar um mês a ninguém.</p></div>
+    <h1>Casas para comprar e arrendar.</h1>
+    <p>Compre ou arrende falando com o proprietário ou com o intermediário. Escolha a casa e entre em contacto.</p></div>
     <div class="sl" id="sl" role="region" aria-label="Casas em destaque">
     <div class="s on"><img src="/slides/foto2.jpg" alt=""><span>Casas de luxo e alto padrão</span></div>
     <div class="s"><img src="/slides/foto3.jpg" alt=""><span>Casas de gama média</span></div>
@@ -239,8 +239,8 @@ body:has(.bar.open) .fx{display:none}
       <div><label>Quintal (opcional)</label><select name="quintal"><option value="">Não indicar</option><option value="sim">Tem quintal</option><option value="nao">Não tem quintal</option></select></div>
       <div class="full"><label>Descrição</label><textarea name="desc" rows="4" required></textarea></div>
       <div class="full"><label>Fotos da casa (1 a 8)</label><input type="file" id="nfo" accept="image/*" multiple required onchange="thumbs()"><div class="thumbs" id="th"></div></div>
-      <div class="full"><label>Documento da casa (prova de propriedade)</label><input type="file" name="doc" accept=".pdf,image/*" required></div>
-      <div class="full fee"><b>Anunciar sem comissões.</b> Taxa do anúncio: <b>0 Kz</b>. Depois de validarmos o documento, o anúncio fica visível durante 30 dias.</div>
+      <div class="full"><label>Documento da casa (prova de propriedade ou autorização do proprietário)</label><input type="file" name="doc" accept=".pdf,image/*" required></div>
+      <div class="full fee"><b>Anunciar é grátis.</b> Taxa do anúncio: <b>0 Kz</b>. Depois de validarmos o documento, o anúncio fica visível durante 30 dias.</div>
       <div class="full"><button class="btn">Enviar anúncio</button></div>
     </form>
     <div id="nok"></div>
@@ -408,8 +408,8 @@ function det(id){
   ${feats(a)}
   <p>${esc(a.desc)}</p>
   <p class="mu">Anúncio activo por mais ${a.dias||30} dias. Código ${String(a.id).padStart(4,'0')}</p>
-  ${a.bloqueado?`<div class="lk"><b>Contacto do dono bloqueado</b><p class="mu">Casa do plano ${PN[a.plano]}. Veja os contactos de todas as casas deste plano durante 3 dias por ${kz(PP[a.plano])}.</p><button class="btn" onclick="pedirAcesso('${a.plano}')">Desbloquear contacto</button></div>`
-  :`<a class="wa" href="https://wa.me/244${a.tel.replace(/\D/g,'')}" target="_blank" rel="noopener">Falar com o dono no WhatsApp</a>
+  ${a.bloqueado?`<div class="lk"><b>Contacto do anunciante bloqueado</b><p class="mu">Casa do plano ${PN[a.plano]}. Veja os contactos de todas as casas deste plano durante 3 dias por ${kz(PP[a.plano])}.</p><button class="btn" onclick="pedirAcesso('${a.plano}')">Desbloquear contacto</button></div>`
+  :`<a class="wa" href="https://wa.me/244${a.tel.replace(/\D/g,'')}" target="_blank" rel="noopener">Falar com o anunciante no WhatsApp</a>
   <p class="mu" style="text-align:center;margin-top:8px">Ou ligue: ${esc(a.tel)}</p>`}`;
   $('#ovD').classList.add('on')}
 
@@ -480,9 +480,9 @@ async function sair(){
   setMe(null);show('home')}
 
 const PD={
- basico:'Contacto visível para todos. Fala directamente com o dono das casas do plano Básico.',
- medio:'Veja o contacto do dono de todas as casas do plano Médio durante 3 dias.',
- premium:'Veja o contacto do dono de todas as casas do plano Premium durante 3 dias.'};
+ basico:'Contacto visível para todos. Fala directamente com o anunciante das casas do plano Básico.',
+ medio:'Veja o contacto do anunciante de todas as casas do plano Médio durante 3 dias.',
+ premium:'Veja o contacto do anunciante de todas as casas do plano Premium durante 3 dias.'};
 async function planosAuto(){
   if(!me||me.papel==='admin')return;
   try{if(sessionStorage.getItem('plv'))return}catch(e){}
