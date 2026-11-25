@@ -265,7 +265,7 @@ body:has(.bar.open) .fx{display:none}
 <main class="w view" id="v-admin">
   <div class="box">
     <h2>Administração</h2>
-    <div class="tabs"><button class="btn s" id="tP" onclick="adm('p')">Por validar</button><button class="btn s g" id="tA" onclick="adm('a')">Publicados</button>$('#tC').classList.toggle('g',t!=='c');$('#tU').classList.toggle('g',t!=='u');
+    <div class="tabs"><button class="btn s" id="tP" onclick="adm('p')">Por validar</button><button class="btn s g" id="tA" onclick="adm('a')">Publicados</button><button class="btn s g" id="tC" onclick="adm('c')">Acessos</button><button class="btn s g" id="tU" onclick="adm('u')">Utilizadores</button></div>
     <div style="overflow-x:auto" id="adm"></div>
   </div>
 </main>
@@ -688,7 +688,7 @@ function admUsersLista(){
 
 /* Administração */
 async function adm(t){
-  admTab=t;$('#tP').classList.toggle('g',t!=='p');$('#tA').classList.toggle('g',t!=='a');$('#tC').classList.toggle('g',t!=='c');
+  admTab=t;$('#tP').classList.toggle('g',t!=='p');$('#tA').classList.toggle('g',t!=='a');$('#tC').classList.toggle('g',t!=='c');$('#tU').classList.toggle('g',t!=='u');
   $('#adm').innerHTML='<p class="mu">A carregar...</p>';
   if(t==='c')return admAcessos();
 if(t==='u')return admUsers();
