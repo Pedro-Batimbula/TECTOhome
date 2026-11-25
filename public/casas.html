@@ -17,6 +17,7 @@ header{background:rgba(250,246,239,.78);-webkit-backdrop-filter:saturate(1.4) bl
 .nav{display:flex;align-items:center;gap:4px;height:68px}
 .logo{font:800 1.3rem var(--fh);margin-right:auto;cursor:pointer}
 .logo i{font-style:normal;color:var(--ac)}
+.logo{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 .nb{background:none;border:0;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--mu);font-weight:600;transition:background .18s,color .18s}
 .nb:hover,.nb.on{background:var(--ac2);color:var(--ac)}
 .btn{background:var(--ac);color:#fff;border:0;padding:10px 18px;border-radius:10px;font-weight:600;cursor:pointer}
@@ -264,7 +265,7 @@ body:has(.bar.open) .fx{display:none}
 <main class="w view" id="v-admin">
   <div class="box">
     <h2>Administração</h2>
-    <div class="tabs"><button class="btn s" id="tP" onclick="adm('p')">Por validar</button><button class="btn s g" id="tA" onclick="adm('a')">Publicados</button><button class="btn s g" id="tC" onclick="adm('c')">Acessos</button></div>
+    <div class="tabs"><button class="btn s" id="tP" onclick="adm('p')">Por validar</button><button class="btn s g" id="tA" onclick="adm('a')">Publicados</button>$('#tC').classList.toggle('g',t!=='c');$('#tU').classList.toggle('g',t!=='u');
     <div style="overflow-x:auto" id="adm"></div>
   </div>
 </main>
@@ -669,11 +670,28 @@ async function admAcesso(acao,id){
   try{await api('/api/admin/acessos/'+id+'/'+acao)}catch(err){alert(err.message);return}
   await adm('c')}
 
+/* Utilizadores (admin) */
+let USR=[];
+async function admUsers(){
+  let rows;
+  try{const r=await fetch('/api/admin/utilizadores');if(!r.ok)throw new Error();rows=await r.json()}
+  catch(e){if(admTab==='u')$('#adm').innerHTML='<p class="er">Não foi possível carregar.</p>';return}
+  if(admTab!=='u')return;
+  USR=rows;
+  $('#adm').innerHTML=`<p class="mu">${rows.length} utilizador(es)</p><input id="uq" placeholder="Pesquisar por nome, telefone ou email" oninput="admUsersLista()" style="margin:8px 0 12px"><div id="ul"></div>`;
+  admUsersLista()}
+function admUsersLista(){
+  const q=($('#uq').value||'').trim().toLowerCase();
+  const rows=USR.filter(u=>!q||[u.nome,u.telefone,u.email].some(x=>String(x||'').toLowerCase().includes(q)));
+  const quando=d=>d?new Date(d).toLocaleString('pt-PT',{dateStyle:'short',timeStyle:'short'}):'—';
+  $('#ul').innerHTML=rows.length?`<table class="tb"><tr><th>Utilizador</th><th>Contacto</th><th>Último acesso</th><th>Acessos</th></tr>${rows.map(u=>`<tr><td><b>${esc(u.nome||'—')}</b>${u.papel==='admin'?' <span class="bd y">Admin</span>':''}<br><span class="mu">${esc(u.email||'')}</span></td><td>${u.telefone?`<a href="https://wa.me/244${u.telefone.replace(/\D/g,'')}" target="_blank" rel="noopener">${esc(u.telefone)}</a>`:'—'}</td><td>${quando(u.ultimo_acesso)}</td><td>${u.total_acessos}</td></tr>`).join('')}</table>`:'<p class="mu">Nenhum utilizador encontrado.</p>'}
+
 /* Administração */
 async function adm(t){
   admTab=t;$('#tP').classList.toggle('g',t!=='p');$('#tA').classList.toggle('g',t!=='a');$('#tC').classList.toggle('g',t!=='c');
   $('#adm').innerHTML='<p class="mu">A carregar...</p>';
   if(t==='c')return admAcessos();
+if(t==='u')return admUsers();
   let rows;
   try{
     const r=await fetch('/api/admin/anuncios?estado='+(t==='p'?'pendente':'publicado'));
@@ -852,15 +870,30 @@ fetch('/api/eu').then(r=>r.json()).then(u=>{if(u)setMe(u)}).catch(()=>{});
 async function setup(e){e.preventDefault();const f=new FormData(e.target);$('#eS').textContent='';
   try{setMe(await api('/api/admin/inicial',{nome:f.get('nome'),telefone:f.get('tel'),email:f.get('email'),senha:f.get('pass'),chave:f.get('chave')}));e.target.reset()}
   catch(err){$('#eS').textContent=err.message}}
-document.addEventListener('keydown',async e=>{
-  if(!(e.ctrlKey&&(e.key==='.'||e.code==='Period')))return;
-  e.preventDefault();
+async function abrirAdminLogin(){
   try{
     const d=await (await fetch('/api/admin/estado')).json();
     authOpen();
     if(!d.existe){$('#fL').style.display='none';$('#fS').style.display='';$('#eS').textContent=''}
   }catch(err){authOpen('Não foi possível verificar o servidor.')}
-});
+}
+document.addEventListener('keydown',e=>{
+  if(!(e.ctrlKey&&(e.key==='.'||e.code==='Period')))return;
+  e.preventDefault();abrirAdminLogin()});
+/* Telemóvel: segurar ~5 s no logótipo abre o mesmo acesso de administração */
+(function(){
+  const lg=document.querySelector('.logo');if(!lg)return;
+  let t=null,fez=false,x0=0,y0=0;
+  const parar=()=>clearTimeout(t);
+  lg.addEventListener('touchstart',e=>{
+    fez=false;parar();
+    x0=e.touches[0].clientX;y0=e.touches[0].clientY;
+    t=setTimeout(()=>{fez=true;abrirAdminLogin()},5000)},{passive:true});
+  lg.addEventListener('touchmove',e=>{
+    if(Math.hypot(e.touches[0].clientX-x0,e.touches[0].clientY-y0)>15)parar()},{passive:true});
+  ['touchend','touchcancel'].forEach(n=>lg.addEventListener(n,parar,{passive:true}));
+  lg.addEventListener('contextmenu',e=>e.preventDefault());
+  lg.addEventListener('click',e=>{if(fez){e.stopImmediatePropagation();e.preventDefault();fez=false}},true)})();
 </script>
 </body>
 </html>
