@@ -21,6 +21,7 @@ const HASH_FALSO = bcrypt.hashSync('nao-existe', 10);
 
 const PROVINCIAS = ['Luanda', 'Benguela', 'Huambo', 'Huíla', 'Cabinda', 'Malanje', 'Uíge', 'Namibe'];
 const PLANOS = ['basico', 'medio', 'premium'];
+const ANUNCIANTES = ['proprietario', 'intermediario'];
 const CATEGORIAS_HABITACAO = ['casa', 'apartamento'];
 const CATEGORIAS_COMERCIAL = ['loja', 'armazem', 'escritorio'];
 const CATEGORIAS = [...CATEGORIAS_HABITACAO, ...CATEGORIAS_COMERCIAL, 'terreno'];
@@ -349,7 +350,7 @@ app.get('/api/anuncios', async (req, res) => {
     const { rows } = await pool.query(
       `SELECT id, tipo, categoria, titulo, descricao, preco, provincia, municipio, bairro,
               quartos, banhos, area_m2, salas, cozinhas, varandas, quintal, contacto,
-              plano,
+              plano, anunciante,
               GREATEST(0, CEIL(EXTRACT(EPOCH FROM (expira_em - now())) / 86400))::int AS dias,
               (SELECT COALESCE(json_agg(f.caminho ORDER BY f.ordem), '[]'::json)
                  FROM fotos f WHERE f.anuncio_id = anuncios.id) AS fotos
@@ -403,6 +404,7 @@ app.post('/api/anuncios', exigirSessao, receberDoc, async (req, res) => {
   const b = req.body;
   const tipo = String(b.tipo || '');
   const categoria = String(b.categoria || 'casa');
+  const anunciante = String(b.anunciante || '');
   const habitacao = CATEGORIAS_HABITACAO.includes(categoria);
   const comercial = CATEGORIAS_COMERCIAL.includes(categoria);
   const titulo = String(b.titulo || '').trim();
@@ -425,6 +427,7 @@ app.post('/api/anuncios', exigirSessao, receberDoc, async (req, res) => {
   const quintal = habitacao ? (quintalTxt === 'sim' ? true : quintalTxt === 'nao' ? false : null) : null;
 
   if (!['venda', 'arrendamento'].includes(tipo)) return recusar('Escolha o tipo de anúncio.');
+  if (!ANUNCIANTES.includes(anunciante)) return recusar('Indique se é proprietário ou intermediário.');
   if (!CATEGORIAS.includes(categoria)) return recusar('Escolha a categoria do imóvel.');
   if (titulo.length < 5 || titulo.length > 70) return recusar('O título deve ter entre 5 e 70 caracteres.');
   if (!(preco >= 1 && preco <= 1e13)) return recusar('Indique um preço válido.');
@@ -456,11 +459,11 @@ app.post('/api/anuncios', exigirSessao, receberDoc, async (req, res) => {
       const { rows } = await cliente.query(
         `INSERT INTO anuncios
            (utilizador_id, tipo, categoria, titulo, descricao, preco, provincia, municipio, bairro,
-            quartos, banhos, area_m2, salas, cozinhas, varandas, quintal, contacto, documento_caminho, plano, pago)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, true)
+            quartos, banhos, area_m2, salas, cozinhas, varandas, quintal, contacto, documento_caminho, plano, anunciante, pago)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, true)
          RETURNING id`,
         [req.utilizador.id, tipo, categoria, titulo, descricao, preco, prov, mun, bairro,
-         quartos, banhos, area, salas, cozinhas, varandas, quintal, contacto, doc.filename, plano]
+         quartos, banhos, area, salas, cozinhas, varandas, quintal, contacto, doc.filename, plano, anunciante]
       );
       id = rows[0].id;
       for (let i = 0; i < fotos.length; i++) {
@@ -601,7 +604,7 @@ app.get('/api/admin/anuncios', exigirAdmin, async (req, res) => {
   const estado = req.query.estado === 'publicado' ? 'publicado' : 'pendente';
   try {
     const { rows } = await pool.query(
-      `SELECT a.id, a.tipo, a.titulo, a.preco, a.provincia, a.municipio, a.pago, a.plano,
+      `SELECT a.id, a.tipo, a.titulo, a.preco, a.provincia, a.municipio, a.pago, a.plano, a.anunciante,
               u.nome AS dono_nome, u.email AS dono_email,
               (a.expira_em IS NOT NULL AND a.expira_em <= now()) AS expirado,
               GREATEST(0, CEIL(EXTRACT(EPOCH FROM (a.expira_em - now())) / 86400))::int AS dias,
@@ -892,5 +895,22 @@ app.post('/api/admin/acessos/:id/remover', exigirAdmin, async (req, res) => {
   }
 });
 
+/* ---------- Arranque ---------- */
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor em http://localhost:${PORT}`));
+
+/* Migração automática: cria a coluna "anunciante" se ainda não existir.
+   Anúncios antigos ficam como 'proprietario'. */
+async function migrar() {
+  await pool.query(
+    "ALTER TABLE anuncios ADD COLUMN IF NOT EXISTS anunciante text NOT NULL DEFAULT 'proprietario'"
+  );
+}
+
+migrar()
+  .then(() => {
+    app.listen(PORT, () => console.log(`Servidor em http://localhost:${PORT}`));
+  })
+  .catch((e) => {
+    console.error('Falha na migração da base de dados:', e.message);
+    process.exit(1);
+  });
