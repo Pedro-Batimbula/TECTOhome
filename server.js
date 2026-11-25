@@ -132,6 +132,20 @@ async function utilizadorAtual(req) {
   }
 }
 
+/* Regista um acesso (no máx. 1 a cada 30 minutos por utilizador) */
+async function registarAcesso(id) {
+  try {
+    await pool.query(
+      `UPDATE utilizadores
+       SET ultimo_acesso = now(), total_acessos = total_acessos + 1
+       WHERE id = $1 AND (ultimo_acesso IS NULL OR ultimo_acesso < now() - interval '30 minutes')`,
+      [id]
+    );
+  } catch (e) {
+    console.error(e.message);
+  }
+}
+
 async function exigirSessao(req, res, next) {
   const u = await utilizadorAtual(req);
   if (!u) return res.status(401).json({ erro: 'Entre na sua conta para anunciar.' });
@@ -164,6 +178,7 @@ app.post('/api/registo', limiteRegisto, async (req, res) => {
       [nome, telefone, email, hash]
     );
     darSessao(res, rows[0]);
+    await registarAcesso(rows[0].id);
     res.status(201).json(publico(rows[0]));
   } catch (e) {
     if (e.code === '23505')
@@ -188,6 +203,7 @@ app.post('/api/login', limiteLogin, async (req, res) => {
       return res.status(401).json({ erro: 'Email ou palavra-passe incorrectos.' });
 
     darSessao(res, u);
+    await registarAcesso(u.id);
     res.json(publico(u));
   } catch (e) {
     console.error(e.message);
@@ -202,6 +218,7 @@ app.post('/api/logout', (req, res) => {
 
 app.get('/api/eu', async (req, res) => {
   const u = await utilizadorAtual(req);
+  if (u) await registarAcesso(u.id);
   res.json(u ? publico(u) : null);
 });
 
@@ -624,6 +641,21 @@ app.get('/api/admin/anuncios', exigirAdmin, async (req, res) => {
   }
 });
 
+app.get('/api/admin/utilizadores', exigirAdmin, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, nome, telefone, email, papel, ultimo_acesso, total_acessos
+       FROM utilizadores
+       ORDER BY ultimo_acesso DESC NULLS LAST, id DESC
+       LIMIT 2000`
+    );
+    res.json(rows.map((r) => ({ ...r, id: Number(r.id) })));
+  } catch (e) {
+    console.error(e.message);
+    res.status(500).json({ erro: 'Não foi possível carregar os utilizadores.' });
+  }
+});
+
 app.get('/api/admin/anuncios/:id/documento', exigirAdmin, async (req, res) => {
   const id = idValido(req.params.id);
   if (!id) return res.status(400).json({ erro: 'Anúncio inválido.' });
@@ -898,12 +930,14 @@ app.post('/api/admin/acessos/:id/remover', exigirAdmin, async (req, res) => {
 /* ---------- Arranque ---------- */
 const PORT = process.env.PORT || 3000;
 
-/* Migração automática: cria a coluna "anunciante" se ainda não existir.
-   Anúncios antigos ficam como 'proprietario'. */
+/* Migração automática: cria as colunas novas se ainda não existirem.
+   Anúncios antigos ficam como 'proprietario'. Utilizadores antigos ficam sem último acesso até voltarem a entrar. */
 async function migrar() {
   await pool.query(
     "ALTER TABLE anuncios ADD COLUMN IF NOT EXISTS anunciante text NOT NULL DEFAULT 'proprietario'"
   );
+  await pool.query('ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS ultimo_acesso timestamptz');
+  await pool.query('ALTER TABLE utilizadores ADD COLUMN IF NOT EXISTS total_acessos integer NOT NULL DEFAULT 0');
 }
 
 migrar()
