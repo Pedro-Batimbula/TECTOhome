@@ -83,6 +83,8 @@ main.view:not(#v-home){padding-top:90px}
 .pl{position:absolute;right:12px;top:12px;font-size:.74rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.88);color:var(--mu)}
 .pl.medio{background:#fff0c4;color:#6b4c00}
 .pl.premium{background:var(--tag);color:#2a1301}
+.an{position:absolute;left:12px;top:44px;font-size:.74rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:#dff5ec;color:#0b5a40}
+.an.intermediario{background:#fff0c4;color:#6b4c00}
 .lk{background:var(--ac2);border-radius:12px;padding:16px;margin-top:14px;text-align:center}
 .lk .btn{margin-top:6px}
 .sl{position:absolute;inset:0;z-index:0;overflow:hidden;background:#2a1301}
@@ -222,7 +224,8 @@ body:has(.bar.open) .fx{display:none}
     <h2>Anunciar a minha casa</h2>
     <p class="mu">Preencha os dados, junte as fotos e o documento. Depois de validarmos o documento, o anúncio fica visível durante 30 dias.</p>
     <form id="nf" class="f" onsubmit="submitNew(event)">
-      <div class="full"><label>Categoria</label><select name="categoria" onchange="catForm()"><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="loja">Loja</option><option value="armazem">Armazém</option><option value="escritorio">Escritório</option><option value="terreno">Terreno</option></select></div>
+      <div class="full"><label>Sou</label><select name="anunciante" required><option value="">Escolha uma opção</option><option value="proprietario">Proprietário</option><option value="intermediario">Intermediário</option></select></div>
+<div class="full"><label>Categoria</label><select name="categoria" onchange="catForm()"><option value="casa">Casa</option><option value="apartamento">Apartamento</option><option value="loja">Loja</option><option value="armazem">Armazém</option><option value="escritorio">Escritório</option><option value="terreno">Terreno</option></select></div>
       <div><label>Tipo</label><select name="tipo"><option value="venda">Venda</option><option value="arrenda">Arrendamento</option></select></div>
       <div><label>Preço (Kz; renda mensal se for arrendamento)</label><input name="preco" type="number" min="1" required></div>
       <div class="full"><label>Título</label><input name="titulo" maxlength="70" placeholder="Ex.: Vivenda T3 com quintal" required></div>
@@ -346,17 +349,18 @@ const IC={
  varanda:'<svg viewBox="0 0 24 24"><path d="M6 10V5h12v5M3 10h18M5 10v10M9 10v10M12 10v10M15 10v10M19 10v10M3 20h18"/></svg>',
  cozinha:'<svg viewBox="0 0 24 24"><path d="M5 10h14v7a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3zM3 10h2M19 10h2M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2"/></svg>'};
 const PN={basico:'Básico',medio:'Médio',premium:'Premium'},PP={medio:3000,premium:5000};
+const AN={proprietario:'Proprietário',intermediario:'Intermediário'};
 function cardFt(a){
   const hab=['casa','apartamento'].includes(a.categoria);
   const it=(hab?[[IC.bed,a.quartos],[IC.bath,a.banhos]]:[[IC.bath,a.banhos]]).concat([[IC.area,a.area!=null?a.area+' m²':null]]);
   return '<div class="ft">'+it.filter(x=>x[1]!==null&&x[1]!==undefined&&x[1]!==''&&x[1]!==0).map(x=>`<span>${x[0]}${x[1]}</span>`).join('')+'</div>'}
 function card(a){return `<article class="c" tabindex="0" onclick="det(${a.id})" onkeydown="if(event.key==='Enter')det(${a.id})">
- <div class="ph" style="background:${grad(a.h)}">${a.fotos[0]?`<img src="${fsrc(a.fotos[0])}" alt="" loading="lazy" onerror="this.remove()">`:'&#127968;'}<span class="tp">${a.tipo==='venda'?'Venda':'Arrendamento'}</span><span class="pl ${a.plano}">${PN[a.plano]}</span><span class="pr">${kz(a.preco)}${a.tipo==='arrenda'?'/mês':''}</span></div>
+ <div class="ph" style="background:${grad(a.h)}">${a.fotos[0]?`<img src="${fsrc(a.fotos[0])}" alt="" loading="lazy" onerror="this.remove()">`:'&#127968;'}<span class="tp">${a.tipo==='venda'?'Venda':'Arrendamento'}</span><span class="pl ${a.plano}">${PN[a.plano]}</span><span class="an ${a.anunciante}">${AN[a.anunciante]}</span><span class="pr">${kz(a.preco)}${a.tipo==='arrenda'?'/mês':''}</span></div>
  <div class="cb"><h3>${esc(a.titulo)}</h3><p class="mu">${esc(a.bairro)}, ${esc(a.mun)}, ${a.prov}</p>
  ${cardFt(a)}</div></article>`}
 
 let PUB=[], rid=0;
-const mapa=r=>({id:+r.id,tipo:r.tipo==='venda'?'venda':'arrenda',categoria:r.categoria||'casa',titulo:r.titulo,prov:r.provincia,mun:r.municipio,bairro:r.bairro,preco:+r.preco,quartos:r.quartos,banhos:r.banhos,area:r.area_m2,salas:r.salas,cozinhas:r.cozinhas,varandas:r.varandas,quintal:r.quintal,tel:r.contacto,desc:r.descricao,dias:r.dias,fotos:r.fotos||[],h:(r.id*47)%360,est:'pub',plano:r.plano||'basico',bloqueado:!!r.bloqueado});
+const mapa=r=>({id:+r.id,tipo:r.tipo==='venda'?'venda':'arrenda',categoria:r.categoria||'casa',titulo:r.titulo,prov:r.provincia,mun:r.municipio,bairro:r.bairro,preco:+r.preco,quartos:r.quartos,banhos:r.banhos,area:r.area_m2,salas:r.salas,cozinhas:r.cozinhas,varandas:r.varandas,quintal:r.quintal,tel:r.contacto,desc:r.descricao,dias:r.dias,fotos:r.fotos||[],h:(r.id*47)%360,est:'pub',plano:r.plano||'basico',anunciante:r.anunciante||'proprietario',bloqueado:!!r.bloqueado});
 
 async function render(){
   const n=++rid,p=new URLSearchParams();
